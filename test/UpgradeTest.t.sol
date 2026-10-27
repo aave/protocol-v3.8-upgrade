@@ -62,6 +62,9 @@ abstract contract UpgradeTest is ProtocolV3TestBase {
 
   bytes32 internal constant ERC1967_IMPLEMENTATION_SLOT =
     0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc;
+  // VersionedInitializable is the Pool's first base: `lastInitializedRevision` then `initializing`
+  bytes32 internal constant LAST_INITIALIZED_REVISION_SLOT = bytes32(uint256(0));
+  bytes32 internal constant INITIALIZING_SLOT = bytes32(uint256(1));
 
   string public NETWORK;
   string public NETWORK_SUB_NAME;
@@ -121,6 +124,35 @@ abstract contract UpgradeTest is ProtocolV3TestBase {
 
     assertEq(_getImplementation(address(pool)), _payload.POOL_IMPL());
     assertEq(IPoolRevision(address(pool)).POOL_REVISION(), 12);
+  }
+
+  /// @dev `setPoolImpl` re-initializes the proxy through `upgradeToAndCall(impl, initialize(provider))`.
+  function test_initialize_poolProxyAtNewRevision() external {
+    UpgradePayload _payload = UpgradePayload(_getTestPayload());
+    address pool = address(_payload.POOL());
+    assertEq(uint256(vm.load(pool, LAST_INITIALIZED_REVISION_SLOT)), _payload.PREVIOUS_POOL_REVISION());
+
+    executePayload(vm, address(_payload));
+
+    assertEq(uint256(vm.load(pool, LAST_INITIALIZED_REVISION_SLOT)), _payload.NEW_POOL_REVISION());
+    assertEq(uint256(vm.load(pool, INITIALIZING_SLOT)), 0);
+
+    IPoolAddressesProvider38 addressesProvider = _payload.POOL_ADDRESSES_PROVIDER();
+    vm.expectRevert(bytes("Contract instance has already been initialized"));
+    PoolInstance(pool).initialize(addressesProvider);
+  }
+
+  /// @dev The implementation's constructor records its own revision, so it can never be initialized.
+  function test_initialize_implementationLocked() external {
+    UpgradePayload _payload = UpgradePayload(_getTestPayload());
+    address poolImpl = _payload.POOL_IMPL();
+
+    assertEq(uint256(vm.load(poolImpl, LAST_INITIALIZED_REVISION_SLOT)), _payload.NEW_POOL_REVISION());
+    assertEq(uint256(vm.load(poolImpl, INITIALIZING_SLOT)), 0);
+
+    IPoolAddressesProvider38 addressesProvider = _payload.POOL_ADDRESSES_PROVIDER();
+    vm.expectRevert(bytes("Contract instance has already been initialized"));
+    PoolInstance(poolImpl).initialize(addressesProvider);
   }
 
   function test_config_reservesUnchanged() external {
