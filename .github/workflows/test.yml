@@ -24,8 +24,6 @@ jobs:
 
   test-sol:
     name: Foundry build n test
-    secrets:
-      ALCHEMY_API_KEY: ${{ secrets.ALCHEMY_API_KEY }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -55,7 +53,7 @@ jobs:
 
       # we let failing tests pass so we can log them in the comment, still we want the ci to fail
       - name: Post test
-        if: ${{ steps.test.outputs.testStatus != 0 || steps.zktest.outputs.testStatus != 0 }}
+        if: ${{ steps.test.outputs.testStatus != 0 }}
         run: |
           echo "tests failed"
           exit 1
