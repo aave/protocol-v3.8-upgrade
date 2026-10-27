@@ -53,4 +53,4 @@ v3.8 adds a transient reentrancy guard to the `Pool` ([changelog](lib/aave-v3-or
 | Linea | 59144 | L2 | `make deploy chain=linea market=Linea` |
 | MegaETH | 4326 | L2 | `make deploy chain=megaeth market=MegaEth` |
 
-Metis is excluded: `TSTORE` reverts on Andromeda. Ethereum EtherFi, Sonic and Scroll are on v3.7 but deprecated, so they are not upgraded. After deploying, set the payload address in `src/Deployments.sol` so the tests run against the deployed payload.
+Metis is excluded: `TSTORE` reverts on Andromeda. Ethereum EtherFi, Sonic and Scroll are on v3.7 but deprecated, so they are not upgraded.
