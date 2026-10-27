@@ -23,70 +23,19 @@ import {IReserveInterestRateStrategy} from "aave-v3-origin/contracts/interfaces/
 import {IPool as IPool38} from "aave-v3-origin/contracts/interfaces/IPool.sol";
 import {IPoolConfigurator} from "aave-v3-origin/contracts/interfaces/IPoolConfigurator.sol";
 import {DataTypes as DataTypes38} from "aave-v3-origin/contracts/protocol/libraries/types/DataTypes.sol";
+import {Create2Utils} from "aave-v3-origin/deployments/contracts/utilities/Create2Utils.sol";
+import {BorrowLogic} from "aave-v3-origin/contracts/protocol/libraries/logic/BorrowLogic.sol";
+import {FlashLoanLogic} from "aave-v3-origin/contracts/protocol/libraries/logic/FlashLoanLogic.sol";
+import {LiquidationLogic} from "aave-v3-origin/contracts/protocol/libraries/logic/LiquidationLogic.sol";
+import {PoolLogic} from "aave-v3-origin/contracts/protocol/libraries/logic/PoolLogic.sol";
+import {SupplyLogic} from "aave-v3-origin/contracts/protocol/libraries/logic/SupplyLogic.sol";
+import {DeploymentLibrary} from "../script/Deploy.s.sol";
 import {UpgradePayload} from "../src/UpgradePayload.sol";
 import {IPoolRevision} from "../src/interfaces/IPoolRevision.sol";
-
-interface IIncentivizedToken {
-  function getIncentivesController() external view returns (address);
-}
-
-interface MockExecute {
-  function execute() external;
-}
-
-contract MockFlashReceiver {
-  using SafeERC20 for IERC20;
-
-  function executeOperation(
-    address[] calldata assets,
-    uint256[] calldata amounts,
-    uint256[] calldata premiums,
-    address initiator, /* initiator */
-    bytes calldata /* params */
-  ) external returns (bool) {
-    for (uint256 i = 0; i < assets.length; i++) {
-      IERC20(assets[i]).forceApprove(msg.sender, amounts[i] + premiums[i]);
-    }
-
-    MockExecute(initiator).execute();
-
-    return true;
-  }
-}
-
-/// @dev Supplies from inside a flashLoanSimple callback, which v3.8 must keep allowing.
-contract SupplyingFlashReceiver {
-  using SafeERC20 for IERC20;
-
-  function executeOperation(
-    address asset,
-    uint256 amount,
-    uint256 premium,
-    address, /* initiator */
-    bytes calldata params
-  )
-    external
-    returns (bool)
-  {
-    uint256 supplyAmount = abi.decode(params, (uint256));
-    IERC20(asset).forceApprove(msg.sender, supplyAmount + amount + premium);
-    IPool(msg.sender).supply(asset, supplyAmount, address(this), 0);
-    return true;
-  }
-}
-
-/// @dev Etched over a rewards controller: re-enters the Pool from the aToken mint hook of a guarded action.
-contract ReentrantRewardsHook {
-  IPool public immutable POOL;
-
-  constructor(IPool pool) {
-    POOL = pool;
-  }
-
-  function handleAction(address, uint256, uint256) external {
-    POOL.setUserEMode(0);
-  }
-}
+import {IIncentivizedToken} from "./interfaces/IIncentivizedToken.sol";
+import {MockFlashReceiver} from "./mocks/MockFlashReceiver.sol";
+import {SupplyingFlashReceiver} from "./mocks/SupplyingFlashReceiver.sol";
+import {ReentrantRewardsHook} from "./mocks/ReentrantRewardsHook.sol";
 
 abstract contract UpgradeTest is ProtocolV3TestBase {
   using SafeERC20 for IERC20;
@@ -109,7 +58,8 @@ abstract contract UpgradeTest is ProtocolV3TestBase {
     uint128 flashLoanPremiumToProtocol;
     uint16 maxNumberReserves;
     uint256 reservesCount;
-    address[5] libraries;
+    // FlashLoanLogic is left out: it is the one library this upgrade redeploys
+    address[4] libraries;
   }
 
   bytes32 internal constant ERC1967_IMPLEMENTATION_SLOT =
@@ -185,6 +135,7 @@ abstract contract UpgradeTest is ProtocolV3TestBase {
     ReserveConfig[] memory configsAfter = _getReservesConfigs(pool);
     _validateCountOfListings(0, configsBefore, configsAfter);
     _noReservesConfigsChangesApartNewListings(configsBefore, configsAfter);
+    assertEq(abi.encode(configsAfter), abi.encode(configsBefore));
   }
 
   function test_config_reserveDataUnchanged() external {
@@ -220,6 +171,7 @@ abstract contract UpgradeTest is ProtocolV3TestBase {
       _validateEmodeCategory(_payload.POOL_ADDRESSES_PROVIDER(), idsBefore[i], categoriesBefore[i]);
       assertEq(pool.getEModeCategoryLtvzeroBitmap(idsBefore[i]), categoriesBefore[i].ltvzeroBitmap);
       assertEq(pool.getIsEModeCategoryIsolated(idsBefore[i]), categoriesBefore[i].isolated);
+      assertEq(abi.encode(_getEModeCategory(pool, idsBefore[i])), abi.encode(categoriesBefore[i]));
     }
   }
 
@@ -239,11 +191,30 @@ abstract contract UpgradeTest is ProtocolV3TestBase {
     assertEq(wiringAfter.flashLoanPremiumToProtocol, wiringBefore.flashLoanPremiumToProtocol);
     assertEq(wiringAfter.maxNumberReserves, wiringBefore.maxNumberReserves);
     assertEq(wiringAfter.reservesCount, wiringBefore.reservesCount);
-    // only FlashLoanLogic is redeployed (index 1); every linked library must have code
-    for (uint256 i = 0; i < 5; i++) {
-      if (i != 1) assertEq(wiringAfter.libraries[i], wiringBefore.libraries[i]);
+    for (uint256 i = 0; i < wiringAfter.libraries.length; i++) {
+      assertEq(wiringAfter.libraries[i], wiringBefore.libraries[i]);
       assertGt(wiringAfter.libraries[i].code.length, 0);
     }
+    assertGt(_payload.POOL().getFlashLoanLogic().code.length, 0);
+    assertEq(abi.encode(wiringAfter), abi.encode(wiringBefore));
+  }
+
+  function test_libraries_matchCreationCode() external {
+    UpgradePayload _payload = UpgradePayload(_getTestPayload());
+    IPool38 pool = _payload.POOL();
+
+    executePayload(vm, address(_payload));
+
+    bytes32 salt = DeploymentLibrary.LIBRARIES_SALT;
+    _assertLibrary(pool.getBorrowLogic(), Create2Utils.computeCreate2Address(salt, type(BorrowLogic).creationCode));
+    _assertLibrary(
+      pool.getFlashLoanLogic(), Create2Utils.computeCreate2Address(salt, type(FlashLoanLogic).creationCode)
+    );
+    _assertLibrary(
+      pool.getLiquidationLogic(), Create2Utils.computeCreate2Address(salt, type(LiquidationLogic).creationCode)
+    );
+    _assertLibrary(pool.getPoolLogic(), Create2Utils.computeCreate2Address(salt, type(PoolLogic).creationCode));
+    _assertLibrary(pool.getSupplyLogic(), Create2Utils.computeCreate2Address(salt, type(SupplyLogic).creationCode));
   }
 
   function test_execute_revertsWhenAlreadyUpgraded() external {
@@ -581,13 +552,12 @@ abstract contract UpgradeTest is ProtocolV3TestBase {
     wiring.flashLoanPremiumToProtocol = pool.FLASHLOAN_PREMIUM_TO_PROTOCOL();
     wiring.maxNumberReserves = pool.MAX_NUMBER_RESERVES();
     wiring.reservesCount = pool.getReservesCount();
-    wiring.libraries = [
-      pool.getBorrowLogic(),
-      pool.getFlashLoanLogic(),
-      pool.getLiquidationLogic(),
-      pool.getPoolLogic(),
-      pool.getSupplyLogic()
-    ];
+    wiring.libraries = [pool.getBorrowLogic(), pool.getLiquidationLogic(), pool.getPoolLogic(), pool.getSupplyLogic()];
+  }
+
+  function _assertLibrary(address linked, address expected) internal view {
+    assertEq(linked, expected);
+    assertGt(linked.code.length, 0);
   }
 
   function _getImplementation(address proxy) internal view returns (address) {
