@@ -9,20 +9,16 @@ import {
   IPool,
   IPoolAddressesProvider,
   IERC20,
-  SafeERC20
+  SafeERC20,
+  DataTypes
 } from "aave-helpers/src/ProtocolV3TestBase.sol";
 import {PercentageMath} from "aave-v3-origin/contracts/protocol/libraries/math/PercentageMath.sol";
 import {TokenMath} from "aave-v3-origin/contracts/protocol/libraries/helpers/TokenMath.sol";
 import {IScaledBalanceToken} from "aave-v3-origin/contracts/interfaces/IScaledBalanceToken.sol";
 import {ReentrancyGuardTransient} from "openzeppelin-contracts/contracts/utils/ReentrancyGuardTransient.sol";
 import {PoolInstance} from "aave-v3-origin/contracts/instances/PoolInstance.sol";
-import {
-  IPoolAddressesProvider as IPoolAddressesProvider38
-} from "aave-v3-origin/contracts/interfaces/IPoolAddressesProvider.sol";
 import {IReserveInterestRateStrategy} from "aave-v3-origin/contracts/interfaces/IReserveInterestRateStrategy.sol";
-import {IPool as IPool38} from "aave-v3-origin/contracts/interfaces/IPool.sol";
 import {IPoolConfigurator} from "aave-v3-origin/contracts/interfaces/IPoolConfigurator.sol";
-import {DataTypes as DataTypes38} from "aave-v3-origin/contracts/protocol/libraries/types/DataTypes.sol";
 import {Create2Utils} from "aave-v3-origin/deployments/contracts/utilities/Create2Utils.sol";
 import {BorrowLogic} from "aave-v3-origin/contracts/protocol/libraries/logic/BorrowLogic.sol";
 import {FlashLoanLogic} from "aave-v3-origin/contracts/protocol/libraries/logic/FlashLoanLogic.sol";
@@ -98,7 +94,6 @@ abstract contract UpgradeTest is ProtocolV3TestBase {
     executePayload(vm, _getTestPayload());
   }
 
-  // function to be called from the flashloan
   function execute() external {
     if (_flashPayload != address(0)) executePayload(vm, _flashPayload);
   }
@@ -106,9 +101,7 @@ abstract contract UpgradeTest is ProtocolV3TestBase {
   /// forge-config: default.isolate = true
   function test_diff() external virtual {
     UpgradePayload _payload = UpgradePayload(_getTestPayload());
-
-    IPoolAddressesProvider addressesProvider = IPoolAddressesProvider(address(_payload.POOL_ADDRESSES_PROVIDER()));
-    IPool pool = IPool(addressesProvider.getPool());
+    IPool pool = _payload.POOL();
 
     defaultTest(
       string(abi.encodePacked(vm.toString(block.chainid), "_", vm.toString(address(pool)))), pool, address(_payload)
@@ -117,7 +110,7 @@ abstract contract UpgradeTest is ProtocolV3TestBase {
 
   function test_upgrade() public virtual {
     UpgradePayload _payload = UpgradePayload(_getTestPayload());
-    IPool pool = IPool(address(_payload.POOL()));
+    IPool pool = _payload.POOL();
     assertEq(IPoolRevision(address(pool)).POOL_REVISION(), _payload.PREVIOUS_POOL_REVISION());
 
     executePayload(vm, address(_payload));
@@ -126,7 +119,6 @@ abstract contract UpgradeTest is ProtocolV3TestBase {
     assertEq(IPoolRevision(address(pool)).POOL_REVISION(), 12);
   }
 
-  /// @dev `setPoolImpl` re-initializes the proxy through `upgradeToAndCall(impl, initialize(provider))`.
   function test_initialize_poolProxyAtNewRevision() external {
     UpgradePayload _payload = UpgradePayload(_getTestPayload());
     address pool = address(_payload.POOL());
@@ -137,12 +129,11 @@ abstract contract UpgradeTest is ProtocolV3TestBase {
     assertEq(uint256(vm.load(pool, LAST_INITIALIZED_REVISION_SLOT)), _payload.NEW_POOL_REVISION());
     assertEq(uint256(vm.load(pool, INITIALIZING_SLOT)), 0);
 
-    IPoolAddressesProvider38 addressesProvider = _payload.POOL_ADDRESSES_PROVIDER();
+    IPoolAddressesProvider addressesProvider = _payload.POOL_ADDRESSES_PROVIDER();
     vm.expectRevert(bytes("Contract instance has already been initialized"));
     PoolInstance(pool).initialize(addressesProvider);
   }
 
-  /// @dev The implementation's constructor records its own revision, so it can never be initialized.
   function test_initialize_implementationLocked() external {
     UpgradePayload _payload = UpgradePayload(_getTestPayload());
     address poolImpl = _payload.POOL_IMPL();
@@ -150,14 +141,14 @@ abstract contract UpgradeTest is ProtocolV3TestBase {
     assertEq(uint256(vm.load(poolImpl, LAST_INITIALIZED_REVISION_SLOT)), _payload.NEW_POOL_REVISION());
     assertEq(uint256(vm.load(poolImpl, INITIALIZING_SLOT)), 0);
 
-    IPoolAddressesProvider38 addressesProvider = _payload.POOL_ADDRESSES_PROVIDER();
+    IPoolAddressesProvider addressesProvider = _payload.POOL_ADDRESSES_PROVIDER();
     vm.expectRevert(bytes("Contract instance has already been initialized"));
     PoolInstance(poolImpl).initialize(addressesProvider);
   }
 
   function test_config_reservesUnchanged() external {
     UpgradePayload _payload = UpgradePayload(_getTestPayload());
-    IPool pool = IPool(address(_payload.POOL()));
+    IPool pool = _payload.POOL();
     ReserveConfig[] memory configsBefore = _getReservesConfigs(pool);
 
     executePayload(vm, address(_payload));
@@ -170,7 +161,7 @@ abstract contract UpgradeTest is ProtocolV3TestBase {
 
   function test_config_reserveDataUnchanged() external {
     UpgradePayload _payload = UpgradePayload(_getTestPayload());
-    IPool pool = IPool(address(_payload.POOL()));
+    IPool pool = _payload.POOL();
     address[] memory reservesBefore = pool.getReservesList();
     bytes32[] memory statesBefore = _reserveStates(pool);
 
@@ -185,9 +176,9 @@ abstract contract UpgradeTest is ProtocolV3TestBase {
 
   function test_config_eModesUnchanged() external {
     UpgradePayload _payload = UpgradePayload(_getTestPayload());
-    IPool38 pool = _payload.POOL();
+    IPool pool = _payload.POOL();
     uint8[] memory idsBefore = _getEModeCategoryIds(pool);
-    DataTypes38.EModeCategory[] memory categoriesBefore = new DataTypes38.EModeCategory[](idsBefore.length);
+    DataTypes.EModeCategory[] memory categoriesBefore = new DataTypes.EModeCategory[](idsBefore.length);
     for (uint256 i = 0; i < idsBefore.length; i++) {
       categoriesBefore[i] = _getEModeCategory(pool, idsBefore[i]);
     }
@@ -226,7 +217,7 @@ abstract contract UpgradeTest is ProtocolV3TestBase {
 
   function test_libraries_matchCreationCode() external {
     UpgradePayload _payload = UpgradePayload(_getTestPayload());
-    IPool38 pool = _payload.POOL();
+    IPool pool = _payload.POOL();
 
     executePayload(vm, address(_payload));
 
@@ -253,11 +244,11 @@ abstract contract UpgradeTest is ProtocolV3TestBase {
 
   function test_constructor_revertsOnAddressesProviderMismatch() external {
     UpgradePayload _payload = UpgradePayload(_getTestPayload());
-    IPoolAddressesProvider38 addressesProvider = _payload.POOL_ADDRESSES_PROVIDER();
+    IPoolAddressesProvider addressesProvider = _payload.POOL_ADDRESSES_PROVIDER();
 
     address poolImpl = address(
       new PoolInstance(
-        IPoolAddressesProvider38(address(0xdead)),
+        IPoolAddressesProvider(address(0xdead)),
         IReserveInterestRateStrategy(_payload.POOL().RESERVE_INTEREST_RATE_STRATEGY())
       )
     );
@@ -268,7 +259,7 @@ abstract contract UpgradeTest is ProtocolV3TestBase {
 
   function test_constructor_revertsOnInterestRateStrategyMismatch() external {
     UpgradePayload _payload = UpgradePayload(_getTestPayload());
-    IPoolAddressesProvider38 addressesProvider = _payload.POOL_ADDRESSES_PROVIDER();
+    IPoolAddressesProvider addressesProvider = _payload.POOL_ADDRESSES_PROVIDER();
 
     address poolImpl = address(new PoolInstance(addressesProvider, IReserveInterestRateStrategy(address(0xdead))));
 
@@ -278,7 +269,7 @@ abstract contract UpgradeTest is ProtocolV3TestBase {
 
   function test_reentrancy_supplyFromFlashLoanCallback() external {
     UpgradePayload _payload = UpgradePayload(_getTestPayload());
-    IPool pool = IPool(address(_payload.POOL()));
+    IPool pool = _payload.POOL();
     executePayload(vm, address(_payload));
 
     ReserveConfig memory config = _getE2eReserve(pool, true);
@@ -298,7 +289,7 @@ abstract contract UpgradeTest is ProtocolV3TestBase {
 
   function test_reentrancy_guardedActionReentryReverts() external {
     UpgradePayload _payload = UpgradePayload(_getTestPayload());
-    IPool pool = IPool(address(_payload.POOL()));
+    IPool pool = _payload.POOL();
     executePayload(vm, address(_payload));
 
     ReserveConfig memory config = _getE2eReserve(pool, false);
@@ -326,7 +317,7 @@ abstract contract UpgradeTest is ProtocolV3TestBase {
    */
   function test_flashloan_upgradeInsideCallback() public {
     UpgradePayload _payload = UpgradePayload(_getTestPayload());
-    IPool pool = IPool(address(_payload.POOL()));
+    IPool pool = _payload.POOL();
     (address[] memory assets, uint256[] memory amounts) = _flashLoanAssets(pool);
 
     uint256 premiumTotal = pool.FLASHLOAN_PREMIUM_TOTAL();
@@ -355,7 +346,7 @@ abstract contract UpgradeTest is ProtocolV3TestBase {
   /// @dev Same as above with a debt-opening (mode 2) flashloan, where the v3.7 frame runs the borrow after the upgrade.
   function test_flashloan_upgradeInsideDebtOpeningCallback() public {
     UpgradePayload _payload = UpgradePayload(_getTestPayload());
-    IPool pool = IPool(address(_payload.POOL()));
+    IPool pool = _payload.POOL();
     FlashBorrow memory flashBorrow = _getFlashBorrow(pool);
     _removeCaps(pool, flashBorrow.collateral);
     _removeCaps(pool, flashBorrow.asset);
@@ -402,10 +393,6 @@ abstract contract UpgradeTest is ProtocolV3TestBase {
     });
   }
 
-  /**
-   * @dev Picks the pair the same way `e2eTest` does: the first collateral with LTV > 0 and the first other borrowable
-   * asset, else the first asset borrowable in an e-mode together with a collateral sharing that e-mode.
-   */
   function _getFlashBorrow(IPool pool) internal view returns (FlashBorrow memory flashBorrow) {
     ReserveConfig[] memory configs = _getReservesConfigs(pool);
     for (uint256 i = 0; i < configs.length; i++) {
@@ -462,7 +449,6 @@ abstract contract UpgradeTest is ProtocolV3TestBase {
       ) {
         continue;
       }
-      // half the virtual balance: the exact amount doesn't matter, it only has to be non-zero
       uint256 amount = configs[i].virtualBalance / 2;
       if (amount == 0) continue;
       assets[length] = configs[i].underlying;
@@ -507,7 +493,6 @@ abstract contract UpgradeTest is ProtocolV3TestBase {
     return false;
   }
 
-  /// @dev First reserve `e2eTest` would include, optionally flashloanable with enough virtual balance for $1k.
   function _getE2eReserve(IPool pool, bool flashLoanable) internal view returns (ReserveConfig memory) {
     ReserveConfig[] memory configs = _getReservesConfigs(pool);
     for (uint256 i = 0; i < configs.length; i++) {
@@ -524,7 +509,7 @@ abstract contract UpgradeTest is ProtocolV3TestBase {
 
   /// @dev Same as `e2eTestAsset`: caps should not prevent testing.
   function _removeCaps(IPool pool, ReserveConfig memory config) internal {
-    IPoolAddressesProvider addressesProvider = IPoolAddressesProvider(pool.ADDRESSES_PROVIDER());
+    IPoolAddressesProvider addressesProvider = pool.ADDRESSES_PROVIDER();
     IPoolConfigurator poolConfigurator = IPoolConfigurator(addressesProvider.getPoolConfigurator());
     vm.startPrank(addressesProvider.getACLAdmin());
     if (config.supplyCap != 0) poolConfigurator.setSupplyCap(config.underlying, 0);
@@ -533,7 +518,7 @@ abstract contract UpgradeTest is ProtocolV3TestBase {
   }
 
   /// @dev Configured categories, enumerated like aave-helpers `_writeEModeConfigs`: stops after three empty ids in a row.
-  function _getEModeCategoryIds(IPool38 pool) internal view returns (uint8[] memory ids) {
+  function _getEModeCategoryIds(IPool pool) internal view returns (uint8[] memory ids) {
     ids = new uint8[](256);
     uint256 length;
     uint8 emptyCounter;
@@ -550,8 +535,8 @@ abstract contract UpgradeTest is ProtocolV3TestBase {
     }
   }
 
-  function _getEModeCategory(IPool38 pool, uint8 id) internal view returns (DataTypes38.EModeCategory memory category) {
-    DataTypes38.CollateralConfig memory collateralConfig = pool.getEModeCategoryCollateralConfig(id);
+  function _getEModeCategory(IPool pool, uint8 id) internal view returns (DataTypes.EModeCategory memory category) {
+    DataTypes.CollateralConfig memory collateralConfig = pool.getEModeCategoryCollateralConfig(id);
     category.ltv = collateralConfig.ltv;
     category.liquidationThreshold = collateralConfig.liquidationThreshold;
     category.liquidationBonus = collateralConfig.liquidationBonus;
@@ -563,8 +548,8 @@ abstract contract UpgradeTest is ProtocolV3TestBase {
   }
 
   function _getPoolWiring(UpgradePayload _payload) internal view returns (PoolWiring memory wiring) {
-    IPoolAddressesProvider38 addressesProvider = _payload.POOL_ADDRESSES_PROVIDER();
-    IPool38 pool = _payload.POOL();
+    IPoolAddressesProvider addressesProvider = _payload.POOL_ADDRESSES_PROVIDER();
+    IPool pool = _payload.POOL();
     wiring.addressesProviderEntries = new address[](ADDRESSES_PROVIDER_IDS.length);
     for (uint256 i = 0; i < ADDRESSES_PROVIDER_IDS.length; i++) {
       wiring.addressesProviderEntries[i] = addressesProvider.getAddress(ADDRESSES_PROVIDER_IDS[i]);

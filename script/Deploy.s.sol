@@ -59,7 +59,6 @@ library DeploymentLibrary {
   // same salt as aave-v3-origin's LibraryPreCompile scripts, so the addresses match foundry.toml `libraries`
   bytes32 internal constant LIBRARIES_SALT = keccak256("AAVE_V3_LIBRARIES_BATCH");
 
-  // L1s
   function _deployMainnetCore() internal returns (address) {
     return _deployL1(AaveV3Ethereum.POOL_ADDRESSES_PROVIDER);
   }
@@ -96,7 +95,6 @@ library DeploymentLibrary {
     return _deployL1(AaveV3Celo.POOL_ADDRESSES_PROVIDER);
   }
 
-  // rollups
   function _deployBase() internal returns (address) {
     return _deployL2(AaveV3Base.POOL_ADDRESSES_PROVIDER);
   }
