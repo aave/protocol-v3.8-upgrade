@@ -268,22 +268,17 @@ abstract contract UpgradeTest is ProtocolV3TestBase {
     assertEq(abi.encode(wiringAfter), abi.encode(wiringBefore));
   }
 
-  function test_libraries_matchCreationCode() external {
+  function test_libraries_matchCompiledCode() external {
     UpgradePayload _payload = UpgradePayload(_getTestPayload());
     IPool pool = _payload.POOL();
 
     executePayload(vm, address(_payload));
 
-    bytes32 salt = DeploymentLibrary.LIBRARIES_SALT;
-    _assertLibrary(pool.getBorrowLogic(), Create2Utils.computeCreate2Address(salt, type(BorrowLogic).creationCode));
-    _assertLibrary(
-      pool.getFlashLoanLogic(), Create2Utils.computeCreate2Address(salt, type(FlashLoanLogic).creationCode)
-    );
-    _assertLibrary(
-      pool.getLiquidationLogic(), Create2Utils.computeCreate2Address(salt, type(LiquidationLogic).creationCode)
-    );
-    _assertLibrary(pool.getPoolLogic(), Create2Utils.computeCreate2Address(salt, type(PoolLogic).creationCode));
-    _assertLibrary(pool.getSupplyLogic(), Create2Utils.computeCreate2Address(salt, type(SupplyLogic).creationCode));
+    _assertLibrary(pool.getBorrowLogic(), type(BorrowLogic).creationCode, type(BorrowLogic).runtimeCode);
+    _assertLibrary(pool.getFlashLoanLogic(), type(FlashLoanLogic).creationCode, type(FlashLoanLogic).runtimeCode);
+    _assertLibrary(pool.getLiquidationLogic(), type(LiquidationLogic).creationCode, type(LiquidationLogic).runtimeCode);
+    _assertLibrary(pool.getPoolLogic(), type(PoolLogic).creationCode, type(PoolLogic).runtimeCode);
+    _assertLibrary(pool.getSupplyLogic(), type(SupplyLogic).creationCode, type(SupplyLogic).runtimeCode);
   }
 
   function test_execute_revertsWhenAlreadyUpgraded() external {
@@ -617,9 +612,15 @@ abstract contract UpgradeTest is ProtocolV3TestBase {
     wiring.reservesCount = pool.getReservesCount();
   }
 
-  function _assertLibrary(address linked, address expected) internal view {
-    assertEq(linked, expected);
-    assertGt(linked.code.length, 0);
+  function _assertLibrary(address linked, bytes memory creationCode, bytes memory runtimeCode) internal view {
+    assertEq(linked, Create2Utils.computeCreate2Address(DeploymentLibrary.LIBRARIES_SALT, creationCode));
+    // deployed libraries carry their own address in the call-protection PUSH20 at offset 1
+    assertEq(runtimeCode[0], bytes1(0x73));
+    bytes20 self = bytes20(linked);
+    for (uint256 i = 0; i < 20; i++) {
+      runtimeCode[i + 1] = self[i];
+    }
+    assertEq(linked.code, runtimeCode);
   }
 
   /// @dev Per (account, slot), keeps writes whose final value differs from the value before the first write.
