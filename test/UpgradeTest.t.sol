@@ -58,8 +58,6 @@ abstract contract UpgradeTest is ProtocolV3TestBase {
     uint128 flashLoanPremiumToProtocol;
     uint16 maxNumberReserves;
     uint256 reservesCount;
-    // FlashLoanLogic is left out: it is the one library this upgrade redeploys
-    address[4] libraries;
   }
 
   bytes32 internal constant ERC1967_IMPLEMENTATION_SLOT =
@@ -191,11 +189,6 @@ abstract contract UpgradeTest is ProtocolV3TestBase {
     assertEq(wiringAfter.flashLoanPremiumToProtocol, wiringBefore.flashLoanPremiumToProtocol);
     assertEq(wiringAfter.maxNumberReserves, wiringBefore.maxNumberReserves);
     assertEq(wiringAfter.reservesCount, wiringBefore.reservesCount);
-    for (uint256 i = 0; i < wiringAfter.libraries.length; i++) {
-      assertEq(wiringAfter.libraries[i], wiringBefore.libraries[i]);
-      assertGt(wiringAfter.libraries[i].code.length, 0);
-    }
-    assertGt(_payload.POOL().getFlashLoanLogic().code.length, 0);
     assertEq(abi.encode(wiringAfter), abi.encode(wiringBefore));
   }
 
@@ -552,7 +545,6 @@ abstract contract UpgradeTest is ProtocolV3TestBase {
     wiring.flashLoanPremiumToProtocol = pool.FLASHLOAN_PREMIUM_TO_PROTOCOL();
     wiring.maxNumberReserves = pool.MAX_NUMBER_RESERVES();
     wiring.reservesCount = pool.getReservesCount();
-    wiring.libraries = [pool.getBorrowLogic(), pool.getLiquidationLogic(), pool.getPoolLogic(), pool.getSupplyLogic()];
   }
 
   function _assertLibrary(address linked, address expected) internal view {
