@@ -1,8 +1,8 @@
-[submodule "lib/aave-v3-origin-private"]
-	path = lib/aave-v3-origin-private
-	url = https://github.com/aave/aave-v3-origin-private
-	branch = feat/pool-reentrancy-guard-and-rounding
 [submodule "lib/aave-helpers"]
 	path = lib/aave-helpers
 	url = https://github.com/aave-dao/aave-helpers
 	branch = main
+[submodule "lib/aave-v3-origin"]
+	path = lib/aave-v3-origin
+	url = https://github.com/aave-dao/aave-v3-origin
+	branch = feat/V3.8

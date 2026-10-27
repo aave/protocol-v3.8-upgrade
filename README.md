@@ -2,7 +2,7 @@
 
 This document outlines the technical process for upgrading the Aave V3 protocol from version 3.7 to version 3.8.
 
-v3.8 adds a transient reentrancy guard to the `Pool` ([changelog](lib/aave-v3-origin-private/docs/3.8/Aave-v3.8-changelog.md)). Only the `Pool` implementation changes. The `PoolConfigurator`, tokens, config engine and data providers stay on their v3.7 deployments.
+v3.8 adds a transient reentrancy guard to the `Pool` ([changelog](lib/aave-v3-origin/docs/3.8/Aave-v3.8-changelog.md)). Only the `Pool` implementation changes. The `PoolConfigurator`, tokens, config engine and data providers stay on their v3.7 deployments.
 
 ## Core components of the upgrade
 
