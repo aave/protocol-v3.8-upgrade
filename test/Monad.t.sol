@@ -7,7 +7,7 @@ import {UpgradeTest} from "./UpgradeTest.t.sol";
 import {Deployments} from "../src/Deployments.sol";
 
 /// forge-config: default.networks.network = "monad"
-contract MonadTest is UpgradeTest("monad", 117065308) {
+contract MonadTest is UpgradeTest("monad", 117104145) {
   function _getPayload() internal virtual override returns (address) {
     return DeploymentLibrary._deployMonad();
   }

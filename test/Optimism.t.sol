@@ -8,7 +8,7 @@ import {DeploymentLibrary} from "../script/Deploy.s.sol";
 import {UpgradeTest} from "./UpgradeTest.t.sol";
 import {Deployments} from "../src/Deployments.sol";
 
-contract OptimismTest is UpgradeTest("optimism", 158756269) {
+contract OptimismTest is UpgradeTest("optimism", 158762311) {
   function _getPayload() internal virtual override returns (address) {
     return DeploymentLibrary._deployOptimism();
   }
