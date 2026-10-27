@@ -34,7 +34,14 @@ jobs:
         with:
           ALCHEMY_API_KEY: ${{ secrets.ALCHEMY_API_KEY }}
 
-      # we simply use foundry zk for all jobs in this repo
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install node dependencies
+        run: npm ci
+
       - name: Run Foundry setup
         uses: aave-dao/github-workflows/.github/actions/foundry-setup@main
 
@@ -44,9 +51,6 @@ jobs:
 
       - name: Run Gas report
         uses: aave-dao/github-workflows/.github/actions/foundry-gas-report@main
-
-      - name: Run Lcov report
-        uses: aave-dao/github-workflows/.github/actions/foundry-lcov-report@main
 
       - name: Store artifact
         uses: aave-dao/github-workflows/.github/actions/comment-artifact@main
