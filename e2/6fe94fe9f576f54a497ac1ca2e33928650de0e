@@ -1,0 +1,27 @@
+test/mocks/SupplyingFlashReceiver.sol
+  s_090817cd75c4c9::t_04f1748c41c770 1-27
+test/mocks/ReentrantRewardsHook.sol
+  s_090817cd75c4c9::t_04f1748c41c770 1-17
+test/interfaces/MockExecute.sol
+  s_090817cd75c4c9::t_04f1748c41c770 1-6
+test/mocks/MockFlashReceiver.sol
+  s_090817cd75c4c9::t_04f1748c41c770 1-26
+test/interfaces/IIncentivizedToken.sol
+  s_090817cd75c4c9::t_04f1748c41c770 1-6
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "e26fe94fe9f576f54a497ac1ca2e33928650de0e",
+  "prompts": {},
+  "sessions": {
+    "s_090817cd75c4c9": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "5de360bc-600d-4ada-a4ab-0deadf6bca6b",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "DhairyaSethi <55102840+DhairyaSethi@users.noreply.github.com>"
+    }
+  }
+}
