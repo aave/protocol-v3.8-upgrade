@@ -19,7 +19,8 @@ import {
   IPoolAddressesProvider as IPoolAddressesProvider38
 } from "aave-v3-origin/contracts/interfaces/IPoolAddressesProvider.sol";
 import {IReserveInterestRateStrategy} from "aave-v3-origin/contracts/interfaces/IReserveInterestRateStrategy.sol";
-import {UpgradePayload, IPoolRevision} from "../src/UpgradePayload.sol";
+import {UpgradePayload} from "../src/UpgradePayload.sol";
+import {IPoolRevision} from "../src/interfaces/IPoolRevision.sol";
 
 interface IIncentivizedToken {
   function getIncentivesController() external view returns (address);
@@ -153,6 +154,21 @@ abstract contract UpgradeTest is ProtocolV3TestBase {
 
     vm.expectRevert(UpgradePayload.WrongPoolRevision.selector);
     _payload.execute();
+  }
+
+  function test_constructor_revertsOnAddressesProviderMismatch() external {
+    UpgradePayload _payload = UpgradePayload(_getTestPayload());
+    IPoolAddressesProvider38 addressesProvider = _payload.POOL_ADDRESSES_PROVIDER();
+
+    address poolImpl = address(
+      new PoolInstance(
+        IPoolAddressesProvider38(address(0xdead)),
+        IReserveInterestRateStrategy(_payload.POOL().RESERVE_INTEREST_RATE_STRATEGY())
+      )
+    );
+
+    vm.expectRevert(UpgradePayload.WrongAddresses.selector);
+    new UpgradePayload(UpgradePayload.ConstructorParams({poolAddressesProvider: addressesProvider, poolImpl: poolImpl}));
   }
 
   function test_constructor_revertsOnInterestRateStrategyMismatch() external {

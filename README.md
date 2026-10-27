@@ -15,7 +15,7 @@ v3.8 adds a transient reentrancy guard to the `Pool` ([changelog](lib/aave-v3-or
 
 | When | Reverts with | Unless |
 | --- | --- | --- |
-| constructor | `WrongAddresses` | `poolImpl.ADDRESSES_PROVIDER()` is the market's addresses provider |
+| constructor | `WrongAddresses` | `poolImpl.ADDRESSES_PROVIDER()` equals the live pool's |
 | constructor | `WrongPoolRevision` | `poolImpl.POOL_REVISION()` is 12 |
 | constructor | `WrongInterestRateStrategy` | `poolImpl.RESERVE_INTEREST_RATE_STRATEGY()` equals the live pool's |
 | `execute()`, before upgrade | `WrongPoolRevision` | the live pool is at revision 11 |
