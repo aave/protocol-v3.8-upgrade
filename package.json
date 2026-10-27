@@ -14,7 +14,7 @@
   "license": "BUSL-1.1",
   "dependencies": {
     "@aave-dao/aave-address-book": "^4.48.0",
-    "@aave-dao/aave-helpers-js": "^1.0.13",
+    "@aave-dao/aave-helpers-js": "^1.6.7",
     "@aave-dao/toolbox": "^0.8.1",
     "p-queue": "^8.1.0",
     "prettier": "^3.5.3"
