@@ -5,6 +5,7 @@ import "forge-std/Test.sol";
 
 import {
   ProtocolV3TestBase,
+  IAaveOracle,
   IPool,
   IPoolAddressesProvider,
   IERC20,
@@ -88,6 +89,14 @@ abstract contract UpgradeTest is ProtocolV3TestBase {
   using SafeERC20 for IERC20;
   using ReserveConfiguration for DataTypes.ReserveConfigurationMap;
   using PercentageMath for uint256;
+
+  struct FlashBorrow {
+    address collateral;
+    uint256 collateralAmount;
+    address asset;
+    uint256 amount;
+    uint8 eModeCategory;
+  }
 
   bytes32 internal constant ERC1967_IMPLEMENTATION_SLOT =
     0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc;
@@ -213,7 +222,7 @@ abstract contract UpgradeTest is ProtocolV3TestBase {
   }
 
   function test_gas() external {
-    executePayload(vm, address(_getPayload()));
+    executePayload(vm, _getTestPayload());
     vm.snapshotGasLastCall("Execution", string.concat(NETWORK, NETWORK_SUB_NAME));
   }
 
@@ -247,6 +256,123 @@ abstract contract UpgradeTest is ProtocolV3TestBase {
     for (uint256 i = 0; i < actual.length; i++) {
       assertEq(actual[i], expected[i]);
     }
+  }
+
+  /// @dev Same as above with a debt-opening (mode 2) flashloan, where the v3.7 frame runs the borrow after the upgrade.
+  function test_flashloan_upgradeInsideDebtOpeningCallback() public {
+    UpgradePayload _payload = UpgradePayload(_getTestPayload());
+    IPool pool = IPool(address(_payload.POOL()));
+    FlashBorrow memory flashBorrow = _findFlashBorrow(pool);
+
+    uint256 snapshot = vm.snapshotState();
+    this.flashBorrowProbe(pool, flashBorrow);
+    executePayload(vm, address(_payload));
+    bytes32[] memory expected = _reserveStates(pool);
+    bytes32 expectedUser = _userState(pool, flashBorrow);
+    vm.revertToState(snapshot);
+
+    _flashPayload = address(_payload);
+    this.flashBorrowProbe(pool, flashBorrow);
+
+    assertEq(IPoolRevision(address(pool)).POOL_REVISION(), _payload.NEW_POOL_REVISION());
+    assertGt(IERC20(pool.getReserveVariableDebtToken(flashBorrow.asset)).balanceOf(address(this)), 0);
+    assertEq(_userState(pool, flashBorrow), expectedUser);
+    bytes32[] memory actual = _reserveStates(pool);
+    for (uint256 i = 0; i < actual.length; i++) {
+      assertEq(actual[i], expected[i]);
+    }
+  }
+
+  /// @dev External so `_findFlashBorrow` can try it and roll back.
+  function flashBorrowProbe(IPool pool, FlashBorrow memory flashBorrow) external {
+    if (flashBorrow.eModeCategory != 0) pool.setUserEMode(flashBorrow.eModeCategory);
+    this.supplyProbe(pool, flashBorrow.collateral, flashBorrow.collateralAmount);
+    // supply only auto-enables collateral with LTV > 0 outside e-mode
+    if (flashBorrow.eModeCategory != 0) pool.setUserUseReserveAsCollateral(flashBorrow.collateral, true);
+    address[] memory assets = new address[](1);
+    assets[0] = flashBorrow.asset;
+    uint256[] memory amounts = new uint256[](1);
+    amounts[0] = flashBorrow.amount;
+    uint256[] memory interestRateModes = new uint256[](1);
+    interestRateModes[0] = 2;
+    pool.flashLoan({
+      receiverAddress: FLASH_RECEIVER,
+      assets: assets,
+      amounts: amounts,
+      interestRateModes: interestRateModes,
+      onBehalfOf: address(this),
+      params: "",
+      referralCode: 0
+    });
+  }
+
+  /**
+   * @dev First collateral / borrowable asset pair for which a mode 2 flashloan of 1% of the collateral value succeeds,
+   * outside e-mode first, then in each configured e-mode category (some markets only lend inside e-mode).
+   */
+  function _findFlashBorrow(IPool pool) internal returns (FlashBorrow memory flashBorrow) {
+    if (_tryCollaterals(pool, flashBorrow)) return flashBorrow;
+    uint8 emptyCategories;
+    for (uint256 category = 1; category <= type(uint8).max && emptyCategories < 3; category++) {
+      if (pool.getEModeCategoryCollateralConfig(uint8(category)).liquidationThreshold == 0) {
+        ++emptyCategories;
+        continue;
+      }
+      emptyCategories = 0;
+      flashBorrow.eModeCategory = uint8(category);
+      if (_tryCollaterals(pool, flashBorrow)) return flashBorrow;
+    }
+    revert("NO_FLASH_BORROW_PAIR");
+  }
+
+  function _tryCollaterals(IPool pool, FlashBorrow memory flashBorrow) internal returns (bool) {
+    address[] memory reserves = pool.getReservesList();
+    for (uint256 i = 0; i < reserves.length; i++) {
+      DataTypes.ReserveConfigurationMap memory config = pool.getConfiguration(reserves[i]);
+      if (!config.getActive() || config.getPaused() || config.getFrozen()) continue;
+      if (flashBorrow.eModeCategory == 0 && config.getLtv() == 0) continue;
+      flashBorrow.collateral = reserves[i];
+      flashBorrow.collateralAmount = 10 ** config.getDecimals();
+      for (uint256 j = 0; j < reserves.length; j++) {
+        if (i != j && _tryFlashBorrow(pool, flashBorrow, reserves[j])) return true;
+      }
+    }
+    return false;
+  }
+
+  function _tryFlashBorrow(IPool pool, FlashBorrow memory flashBorrow, address asset) internal returns (bool ok) {
+    DataTypes.ReserveConfigurationMap memory config = pool.getConfiguration(asset);
+    if (
+      !config.getActive() || config.getPaused() || config.getFrozen() || !config.getBorrowingEnabled()
+        || !config.getFlashLoanEnabled()
+    ) return false;
+    IAaveOracle oracle = IAaveOracle(pool.ADDRESSES_PROVIDER().getPriceOracle());
+    flashBorrow.asset = asset;
+    flashBorrow.amount =
+      (oracle.getAssetPrice(flashBorrow.collateral) * 10 ** config.getDecimals()) / 100 / oracle.getAssetPrice(asset);
+    if (flashBorrow.amount == 0) return false;
+
+    uint256 snapshot = vm.snapshotState();
+    try this.flashBorrowProbe(pool, flashBorrow) {
+      ok = true;
+    } catch {}
+    vm.revertToState(snapshot);
+  }
+
+  function _userState(IPool pool, FlashBorrow memory flashBorrow) internal view returns (bytes32) {
+    return keccak256(
+      abi.encode(
+        _accountData(pool),
+        pool.getUserConfiguration(address(this)).data,
+        IERC20(pool.getReserveAToken(flashBorrow.collateral)).balanceOf(address(this)),
+        IERC20(pool.getReserveVariableDebtToken(flashBorrow.asset)).balanceOf(address(this))
+      )
+    );
+  }
+
+  function _accountData(IPool pool) internal view returns (bytes32) {
+    (uint256 a, uint256 b, uint256 c, uint256 d, uint256 e, uint256 f) = pool.getUserAccountData(address(this));
+    return keccak256(abi.encode(a, b, c, d, e, f));
   }
 
   function _flashLoanAssets(IPool pool) internal returns (address[] memory assets, uint256[] memory amounts) {
