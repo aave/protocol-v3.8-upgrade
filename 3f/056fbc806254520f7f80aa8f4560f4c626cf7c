@@ -1,0 +1,22 @@
+test/UpgradeTest.t.sol
+  s_090817cd75c4c9::t_04f1748c41c770 35-38
+  s_090817cd75c4c9::t_538e8c5fcd6568 61-62,138,174,194-195,198-199,555
+  s_090817cd75c4c9::t_547a5e3c956db7 26-32,200,202-217,556-560
+  s_090817cd75c4c9::t_6d7e4578b1f0db 201
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "3f056fbc806254520f7f80aa8f4560f4c626cf7c",
+  "prompts": {},
+  "sessions": {
+    "s_090817cd75c4c9": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "5de360bc-600d-4ada-a4ab-0deadf6bca6b",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "DhairyaSethi <55102840+DhairyaSethi@users.noreply.github.com>"
+    }
+  }
+}
