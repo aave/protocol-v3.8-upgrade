@@ -1,0 +1,21 @@
+.nvmrc
+  s_090817cd75c4c9::t_6f6974e17e5fb2 1
+.github/workflows/test.yml
+  s_090817cd75c4c9::t_6f6974e17e5fb2 37-38
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "1f07f0b8e6f9545168734cb0eeeb3fa7cd24a1be",
+  "prompts": {},
+  "sessions": {
+    "s_090817cd75c4c9": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "5de360bc-600d-4ada-a4ab-0deadf6bca6b",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "DhairyaSethi <55102840+DhairyaSethi@users.noreply.github.com>"
+    }
+  }
+}
