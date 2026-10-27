@@ -144,6 +144,10 @@ abstract contract UpgradeTest is ProtocolV3TestBase {
     IPoolAddressesProvider addressesProvider = _payload.POOL_ADDRESSES_PROVIDER();
     vm.expectRevert(bytes("Contract instance has already been initialized"));
     PoolInstance(poolImpl).initialize(addressesProvider);
+
+    executePayload(vm, address(_payload));
+
+    assertEq(_getImplementation(addressesProvider.getPool()), poolImpl);
   }
 
   function test_config_reservesUnchanged() external {
