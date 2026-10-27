@@ -61,75 +61,75 @@ library DeploymentLibrary {
 
   // L1s
   function _deployMainnetCore() internal returns (address) {
-    return _deployL1(address(AaveV3Ethereum.POOL_ADDRESSES_PROVIDER));
+    return _deployL1(AaveV3Ethereum.POOL_ADDRESSES_PROVIDER);
   }
 
   function _deployMainnetLido() internal returns (address) {
-    return _deployL1(address(AaveV3EthereumLido.POOL_ADDRESSES_PROVIDER));
+    return _deployL1(AaveV3EthereumLido.POOL_ADDRESSES_PROVIDER);
   }
 
   function _deployPlasma() internal returns (address) {
-    return _deployL1(address(AaveV3Plasma.POOL_ADDRESSES_PROVIDER));
+    return _deployL1(AaveV3Plasma.POOL_ADDRESSES_PROVIDER);
   }
 
   function _deployAvalanche() internal returns (address) {
-    return _deployL1(address(AaveV3Avalanche.POOL_ADDRESSES_PROVIDER));
+    return _deployL1(AaveV3Avalanche.POOL_ADDRESSES_PROVIDER);
   }
 
   function _deployBNB() internal returns (address) {
-    return _deployL1(address(AaveV3BNB.POOL_ADDRESSES_PROVIDER));
+    return _deployL1(AaveV3BNB.POOL_ADDRESSES_PROVIDER);
   }
 
   function _deployMonad() internal returns (address) {
-    return _deployL1(address(AaveV3Monad.POOL_ADDRESSES_PROVIDER));
+    return _deployL1(AaveV3Monad.POOL_ADDRESSES_PROVIDER);
   }
 
   function _deployPolygon() internal returns (address) {
-    return _deployL1(address(AaveV3Polygon.POOL_ADDRESSES_PROVIDER));
+    return _deployL1(AaveV3Polygon.POOL_ADDRESSES_PROVIDER);
   }
 
   function _deployGnosis() internal returns (address) {
-    return _deployL1(address(AaveV3Gnosis.POOL_ADDRESSES_PROVIDER));
+    return _deployL1(AaveV3Gnosis.POOL_ADDRESSES_PROVIDER);
   }
 
   function _deployCelo() internal returns (address) {
-    return _deployL1(address(AaveV3Celo.POOL_ADDRESSES_PROVIDER));
+    return _deployL1(AaveV3Celo.POOL_ADDRESSES_PROVIDER);
   }
 
   // rollups
   function _deployBase() internal returns (address) {
-    return _deployL2(address(AaveV3Base.POOL_ADDRESSES_PROVIDER));
+    return _deployL2(AaveV3Base.POOL_ADDRESSES_PROVIDER);
   }
 
   function _deployArbitrum() internal returns (address) {
-    return _deployL2(address(AaveV3Arbitrum.POOL_ADDRESSES_PROVIDER));
+    return _deployL2(AaveV3Arbitrum.POOL_ADDRESSES_PROVIDER);
   }
 
   function _deployOptimism() internal returns (address) {
-    return _deployL2(address(AaveV3Optimism.POOL_ADDRESSES_PROVIDER));
+    return _deployL2(AaveV3Optimism.POOL_ADDRESSES_PROVIDER);
   }
 
   function _deployMantle() internal returns (address) {
-    return _deployL2(address(AaveV3Mantle.POOL_ADDRESSES_PROVIDER));
+    return _deployL2(AaveV3Mantle.POOL_ADDRESSES_PROVIDER);
   }
 
   function _deployInk() internal returns (address) {
-    return _deployL2(address(AaveV3InkWhitelabel.POOL_ADDRESSES_PROVIDER));
+    return _deployL2(AaveV3InkWhitelabel.POOL_ADDRESSES_PROVIDER);
   }
 
   function _deployXLayer() internal returns (address) {
-    return _deployL2(address(AaveV3XLayer.POOL_ADDRESSES_PROVIDER));
+    return _deployL2(AaveV3XLayer.POOL_ADDRESSES_PROVIDER);
   }
 
   function _deployLinea() internal returns (address) {
-    return _deployL2(address(AaveV3Linea.POOL_ADDRESSES_PROVIDER));
+    return _deployL2(AaveV3Linea.POOL_ADDRESSES_PROVIDER);
   }
 
   function _deployMegaEth() internal returns (address) {
-    return _deployL2(address(AaveV3MegaEth.POOL_ADDRESSES_PROVIDER));
+    return _deployL2(AaveV3MegaEth.POOL_ADDRESSES_PROVIDER);
   }
 
-  function _deployL1(address poolAddressesProvider) internal returns (address) {
+  function _deployL1(IPoolAddressesProvider poolAddressesProvider) internal returns (address) {
     _deployLibraries();
     return _deployPayload(
       poolAddressesProvider,
@@ -137,7 +137,7 @@ library DeploymentLibrary {
     );
   }
 
-  function _deployL2(address poolAddressesProvider) internal returns (address) {
+  function _deployL2(IPoolAddressesProvider poolAddressesProvider) internal returns (address) {
     _deployLibraries();
     return _deployPayload(
       poolAddressesProvider,
@@ -156,21 +156,14 @@ library DeploymentLibrary {
     Create2Utils._create2Deploy(LIBRARIES_SALT, type(SupplyLogic).creationCode);
   }
 
-  function _poolImplConstructorArgs(address poolAddressesProvider) private view returns (bytes memory) {
-    return abi.encode(
-      poolAddressesProvider,
-      IPool(IPoolAddressesProvider(poolAddressesProvider).getPool()).RESERVE_INTEREST_RATE_STRATEGY()
-    );
+  function _poolImplConstructorArgs(IPoolAddressesProvider poolAddressesProvider) private view returns (bytes memory) {
+    return abi.encode(poolAddressesProvider, IPool(poolAddressesProvider.getPool()).RESERVE_INTEREST_RATE_STRATEGY());
   }
 
-  function _deployPayload(address poolAddressesProvider, address poolImpl) private returns (address) {
+  function _deployPayload(IPoolAddressesProvider poolAddressesProvider, address poolImpl) private returns (address) {
     return GovV3Helpers.deployDeterministic(
       type(UpgradePayload).creationCode,
-      abi.encode(
-        UpgradePayload.ConstructorParams({
-          poolAddressesProvider: IPoolAddressesProvider(poolAddressesProvider), poolImpl: poolImpl
-        })
-      )
+      abi.encode(UpgradePayload.ConstructorParams({poolAddressesProvider: poolAddressesProvider, poolImpl: poolImpl}))
     );
   }
 }
