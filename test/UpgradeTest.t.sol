@@ -25,6 +25,10 @@ import {FlashLoanLogic} from "aave-v3-origin/contracts/protocol/libraries/logic/
 import {LiquidationLogic} from "aave-v3-origin/contracts/protocol/libraries/logic/LiquidationLogic.sol";
 import {PoolLogic} from "aave-v3-origin/contracts/protocol/libraries/logic/PoolLogic.sol";
 import {SupplyLogic} from "aave-v3-origin/contracts/protocol/libraries/logic/SupplyLogic.sol";
+import {IL2Pool} from "aave-v3-origin/contracts/interfaces/IL2Pool.sol";
+import {Ownable} from "aave-v3-origin/contracts/dependencies/openzeppelin/contracts/Ownable.sol";
+import {GovV3Helpers} from "aave-helpers/src/GovV3Helpers.sol";
+import {IPayloadsControllerCore, PayloadsControllerUtils} from "aave-address-book/GovernanceV3.sol";
 import {DeploymentLibrary} from "../script/Deploy.s.sol";
 import {UpgradePayload} from "../src/UpgradePayload.sol";
 import {IPoolRevision} from "../src/interfaces/IPoolRevision.sol";
@@ -148,6 +152,51 @@ abstract contract UpgradeTest is ProtocolV3TestBase {
     executePayload(vm, address(_payload));
 
     assertEq(_getImplementation(addressesProvider.getPool()), poolImpl);
+  }
+
+  function test_deployedPayloadMatchesLocalBuild() external {
+    address deployed = _getDeployedPayload();
+    assertNotEq(deployed, address(0));
+    assertEq(_getPayload(), deployed);
+  }
+
+  function test_execute_onlyExpectedStorageWrites() external {
+    UpgradePayload _payload = UpgradePayload(_getTestPayload());
+    address pool = address(_payload.POOL());
+    IPayloadsControllerCore controller = GovV3Helpers.getPayloadsController(_payload.POOL(), block.chainid);
+    uint40 payloadId = GovV3Helpers.readyPayload(vm, address(_payload), address(controller));
+
+    vm.startStateDiffRecording();
+    controller.executePayload(payloadId);
+    (address[] memory accounts, bytes32[] memory slots) = _netStorageChanges(vm.stopAndReturnStateDiff());
+
+    uint256 poolWrites;
+    for (uint256 i = 0; i < accounts.length; i++) {
+      if (accounts[i] == address(controller)) continue;
+      assertEq(accounts[i], pool);
+      assertTrue(slots[i] == LAST_INITIALIZED_REVISION_SLOT || slots[i] == ERC1967_IMPLEMENTATION_SLOT);
+      ++poolWrites;
+    }
+    assertEq(poolWrites, 2);
+  }
+
+  function test_executorIsAddressesProviderOwner() external {
+    UpgradePayload _payload = UpgradePayload(_getTestPayload());
+    IPayloadsControllerCore controller = GovV3Helpers.getPayloadsController(_payload.POOL(), block.chainid);
+    address executor =
+      controller.getExecutorSettingsByAccessControl(PayloadsControllerUtils.AccessControl.Level_1).executor;
+
+    assertEq(Ownable(address(_payload.POOL_ADDRESSES_PROVIDER())).owner(), executor);
+  }
+
+  function test_poolFlavourUnchanged() external {
+    UpgradePayload _payload = UpgradePayload(_getTestPayload());
+    address previousImpl = _getImplementation(address(_payload.POOL()));
+    address newImpl = _payload.POOL_IMPL();
+
+    assertTrue(_hasSelector(previousImpl, IPool.getReserveData.selector));
+    assertTrue(_hasSelector(newImpl, IPool.getReserveData.selector));
+    assertEq(_hasSelector(newImpl, IL2Pool.supply.selector), _hasSelector(previousImpl, IL2Pool.supply.selector));
   }
 
   function test_config_reservesUnchanged() external {
@@ -571,6 +620,64 @@ abstract contract UpgradeTest is ProtocolV3TestBase {
   function _assertLibrary(address linked, address expected) internal view {
     assertEq(linked, expected);
     assertGt(linked.code.length, 0);
+  }
+
+  /// @dev Per (account, slot), keeps writes whose final value differs from the value before the first write.
+  function _netStorageChanges(Vm.AccountAccess[] memory accesses)
+    internal
+    pure
+    returns (address[] memory accounts, bytes32[] memory slots)
+  {
+    uint256 maxWrites;
+    for (uint256 i = 0; i < accesses.length; i++) {
+      maxWrites += accesses[i].storageAccesses.length;
+    }
+    accounts = new address[](maxWrites);
+    slots = new bytes32[](maxWrites);
+    bytes32[] memory initialValues = new bytes32[](maxWrites);
+    bytes32[] memory finalValues = new bytes32[](maxWrites);
+    uint256 length;
+    for (uint256 i = 0; i < accesses.length; i++) {
+      if (accesses[i].reverted) continue;
+      for (uint256 j = 0; j < accesses[i].storageAccesses.length; j++) {
+        Vm.StorageAccess memory access = accesses[i].storageAccesses[j];
+        if (!access.isWrite || access.reverted) continue;
+        uint256 k;
+        while (k < length && (accounts[k] != access.account || slots[k] != access.slot)) k++;
+        if (k == length) {
+          accounts[k] = access.account;
+          slots[k] = access.slot;
+          initialValues[k] = access.previousValue;
+          ++length;
+        }
+        finalValues[k] = access.newValue;
+      }
+    }
+    uint256 changed;
+    for (uint256 k = 0; k < length; k++) {
+      if (initialValues[k] == finalValues[k]) continue;
+      accounts[changed] = accounts[k];
+      slots[changed] = slots[k];
+      ++changed;
+    }
+    assembly {
+      mstore(accounts, changed)
+      mstore(slots, changed)
+    }
+  }
+
+  /// @dev Looks for the selector pushed by the function dispatcher (PUSH4 <selector>).
+  function _hasSelector(address target, bytes4 selector) internal view returns (bool) {
+    bytes memory code = target.code;
+    for (uint256 i = 0; i + 4 < code.length; i++) {
+      if (code[i] != 0x63) continue;
+      bytes4 candidate;
+      assembly {
+        candidate := mload(add(add(code, 33), i))
+      }
+      if (candidate == selector) return true;
+    }
+    return false;
   }
 
   function _getImplementation(address proxy) internal view returns (address) {
