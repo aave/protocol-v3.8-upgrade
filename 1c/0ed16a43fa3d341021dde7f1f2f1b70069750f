@@ -1,0 +1,53 @@
+src/Deployments.sol
+  s_090817cd75c4c9::t_c3bc6a883a4bbf 5-21
+test/MainnetLido.t.sol
+  s_090817cd75c4c9::t_c3bc6a883a4bbf 9
+test/BNB.t.sol
+  s_090817cd75c4c9::t_c3bc6a883a4bbf 9
+test/Celo.t.sol
+  s_090817cd75c4c9::t_c3bc6a883a4bbf 11
+test/Optimism.t.sol
+  s_090817cd75c4c9::t_c3bc6a883a4bbf 11
+test/MegaEth.t.sol
+  s_090817cd75c4c9::t_c3bc6a883a4bbf 9
+test/Plasma.t.sol
+  s_090817cd75c4c9::t_c3bc6a883a4bbf 9
+test/Avalanche.t.sol
+  s_090817cd75c4c9::t_c3bc6a883a4bbf 9
+test/Mantle.t.sol
+  s_090817cd75c4c9::t_c3bc6a883a4bbf 9
+test/Ink.t.sol
+  s_090817cd75c4c9::t_c3bc6a883a4bbf 12
+test/Monad.t.sol
+  s_090817cd75c4c9::t_c3bc6a883a4bbf 10
+test/Gnosis.t.sol
+  s_090817cd75c4c9::t_c3bc6a883a4bbf 9
+test/Polygon.t.sol
+  s_090817cd75c4c9::t_c3bc6a883a4bbf 9
+test/XLayer.t.sol
+  s_090817cd75c4c9::t_c3bc6a883a4bbf 9
+test/Base.t.sol
+  s_090817cd75c4c9::t_c3bc6a883a4bbf 9
+test/Linea.t.sol
+  s_090817cd75c4c9::t_c3bc6a883a4bbf 9
+test/Arbitrum.t.sol
+  s_090817cd75c4c9::t_c3bc6a883a4bbf 9
+test/MainnetCore.t.sol
+  s_090817cd75c4c9::t_c3bc6a883a4bbf 10
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "1c0ed16a43fa3d341021dde7f1f2f1b70069750f",
+  "prompts": {},
+  "sessions": {
+    "s_090817cd75c4c9": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "5de360bc-600d-4ada-a4ab-0deadf6bca6b",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "DhairyaSethi <55102840+DhairyaSethi@users.noreply.github.com>"
+    }
+  }
+}
