@@ -5,21 +5,24 @@ import "forge-std/Test.sol";
 
 import {
   ProtocolV3TestBase,
-  IAaveOracle,
+  ReserveConfig,
   IPool,
   IPoolAddressesProvider,
   IERC20,
-  DataTypes,
-  SafeERC20,
-  ReserveConfiguration
+  SafeERC20
 } from "aave-helpers/src/ProtocolV3TestBase.sol";
 import {PercentageMath} from "aave-v3-origin/contracts/protocol/libraries/math/PercentageMath.sol";
+import {TokenMath} from "aave-v3-origin/contracts/protocol/libraries/helpers/TokenMath.sol";
+import {IScaledBalanceToken} from "aave-v3-origin/contracts/interfaces/IScaledBalanceToken.sol";
 import {ReentrancyGuardTransient} from "openzeppelin-contracts/contracts/utils/ReentrancyGuardTransient.sol";
 import {PoolInstance} from "aave-v3-origin/contracts/instances/PoolInstance.sol";
 import {
   IPoolAddressesProvider as IPoolAddressesProvider38
 } from "aave-v3-origin/contracts/interfaces/IPoolAddressesProvider.sol";
 import {IReserveInterestRateStrategy} from "aave-v3-origin/contracts/interfaces/IReserveInterestRateStrategy.sol";
+import {IPool as IPool38} from "aave-v3-origin/contracts/interfaces/IPool.sol";
+import {IPoolConfigurator} from "aave-v3-origin/contracts/interfaces/IPoolConfigurator.sol";
+import {DataTypes as DataTypes38} from "aave-v3-origin/contracts/protocol/libraries/types/DataTypes.sol";
 import {UpgradePayload} from "../src/UpgradePayload.sol";
 import {IPoolRevision} from "../src/interfaces/IPoolRevision.sol";
 
@@ -87,15 +90,26 @@ contract ReentrantRewardsHook {
 
 abstract contract UpgradeTest is ProtocolV3TestBase {
   using SafeERC20 for IERC20;
-  using ReserveConfiguration for DataTypes.ReserveConfigurationMap;
   using PercentageMath for uint256;
+  using TokenMath for uint256;
 
   struct FlashBorrow {
-    address collateral;
-    uint256 collateralAmount;
-    address asset;
-    uint256 amount;
+    ReserveConfig collateral;
+    ReserveConfig asset;
     uint8 eModeCategory;
+  }
+
+  struct PoolWiring {
+    address[] addressesProviderEntries;
+    string marketId;
+    address poolConfiguratorImpl;
+    address addressesProvider;
+    address interestRateStrategy;
+    uint128 flashLoanPremiumTotal;
+    uint128 flashLoanPremiumToProtocol;
+    uint16 maxNumberReserves;
+    uint256 reservesCount;
+    address[5] libraries;
   }
 
   bytes32 internal constant ERC1967_IMPLEMENTATION_SLOT =
@@ -107,6 +121,17 @@ abstract contract UpgradeTest is ProtocolV3TestBase {
   address FLASH_RECEIVER;
   // payload `execute()` runs from inside the flashloan callback; zero for the control run
   address internal _flashPayload;
+
+  bytes32[8] internal ADDRESSES_PROVIDER_IDS = [
+    bytes32("POOL"),
+    "POOL_CONFIGURATOR",
+    "PRICE_ORACLE",
+    "ACL_MANAGER",
+    "ACL_ADMIN",
+    "PRICE_ORACLE_SENTINEL",
+    "DATA_PROVIDER",
+    "UMBRELLA"
+  ];
 
   constructor(string memory network, uint256 blocknumber) {
     NETWORK = network;
@@ -142,18 +167,83 @@ abstract contract UpgradeTest is ProtocolV3TestBase {
   function test_upgrade() public virtual {
     UpgradePayload _payload = UpgradePayload(_getTestPayload());
     IPool pool = IPool(address(_payload.POOL()));
-    address poolConfigurator = _payload.POOL_ADDRESSES_PROVIDER().getPoolConfigurator();
-
-    address interestRateStrategyBefore = pool.RESERVE_INTEREST_RATE_STRATEGY();
-    address poolConfiguratorImplBefore = _getImplementation(poolConfigurator);
     assertEq(IPoolRevision(address(pool)).POOL_REVISION(), _payload.PREVIOUS_POOL_REVISION());
 
     executePayload(vm, address(_payload));
 
     assertEq(_getImplementation(address(pool)), _payload.POOL_IMPL());
     assertEq(IPoolRevision(address(pool)).POOL_REVISION(), 12);
-    assertEq(pool.RESERVE_INTEREST_RATE_STRATEGY(), interestRateStrategyBefore);
-    assertEq(_getImplementation(poolConfigurator), poolConfiguratorImplBefore);
+  }
+
+  function test_config_reservesUnchanged() external {
+    UpgradePayload _payload = UpgradePayload(_getTestPayload());
+    IPool pool = IPool(address(_payload.POOL()));
+    ReserveConfig[] memory configsBefore = _getReservesConfigs(pool);
+
+    executePayload(vm, address(_payload));
+
+    ReserveConfig[] memory configsAfter = _getReservesConfigs(pool);
+    _validateCountOfListings(0, configsBefore, configsAfter);
+    _noReservesConfigsChangesApartNewListings(configsBefore, configsAfter);
+  }
+
+  function test_config_reserveDataUnchanged() external {
+    UpgradePayload _payload = UpgradePayload(_getTestPayload());
+    IPool pool = IPool(address(_payload.POOL()));
+    address[] memory reservesBefore = pool.getReservesList();
+    bytes32[] memory statesBefore = _reserveStates(pool);
+
+    executePayload(vm, address(_payload));
+
+    assertEq(pool.getReservesList(), reservesBefore);
+    bytes32[] memory statesAfter = _reserveStates(pool);
+    for (uint256 i = 0; i < statesAfter.length; i++) {
+      assertEq(statesAfter[i], statesBefore[i]);
+    }
+  }
+
+  function test_config_eModesUnchanged() external {
+    UpgradePayload _payload = UpgradePayload(_getTestPayload());
+    IPool38 pool = _payload.POOL();
+    uint8[] memory idsBefore = _getEModeCategoryIds(pool);
+    DataTypes38.EModeCategory[] memory categoriesBefore = new DataTypes38.EModeCategory[](idsBefore.length);
+    for (uint256 i = 0; i < idsBefore.length; i++) {
+      categoriesBefore[i] = _getEModeCategory(pool, idsBefore[i]);
+    }
+
+    executePayload(vm, address(_payload));
+
+    uint8[] memory idsAfter = _getEModeCategoryIds(pool);
+    assertEq(idsAfter.length, idsBefore.length);
+    for (uint256 i = 0; i < idsBefore.length; i++) {
+      assertEq(idsAfter[i], idsBefore[i]);
+      _validateEmodeCategory(_payload.POOL_ADDRESSES_PROVIDER(), idsBefore[i], categoriesBefore[i]);
+      assertEq(pool.getEModeCategoryLtvzeroBitmap(idsBefore[i]), categoriesBefore[i].ltvzeroBitmap);
+      assertEq(pool.getIsEModeCategoryIsolated(idsBefore[i]), categoriesBefore[i].isolated);
+    }
+  }
+
+  function test_config_poolWiringUnchanged() external {
+    UpgradePayload _payload = UpgradePayload(_getTestPayload());
+    PoolWiring memory wiringBefore = _getPoolWiring(_payload);
+
+    executePayload(vm, address(_payload));
+
+    PoolWiring memory wiringAfter = _getPoolWiring(_payload);
+    assertEq(wiringAfter.addressesProviderEntries, wiringBefore.addressesProviderEntries);
+    assertEq(wiringAfter.marketId, wiringBefore.marketId);
+    assertEq(wiringAfter.poolConfiguratorImpl, wiringBefore.poolConfiguratorImpl);
+    assertEq(wiringAfter.addressesProvider, wiringBefore.addressesProvider);
+    assertEq(wiringAfter.interestRateStrategy, wiringBefore.interestRateStrategy);
+    assertEq(wiringAfter.flashLoanPremiumTotal, wiringBefore.flashLoanPremiumTotal);
+    assertEq(wiringAfter.flashLoanPremiumToProtocol, wiringBefore.flashLoanPremiumToProtocol);
+    assertEq(wiringAfter.maxNumberReserves, wiringBefore.maxNumberReserves);
+    assertEq(wiringAfter.reservesCount, wiringBefore.reservesCount);
+    // only FlashLoanLogic is redeployed (index 1); every linked library must have code
+    for (uint256 i = 0; i < 5; i++) {
+      if (i != 1) assertEq(wiringAfter.libraries[i], wiringBefore.libraries[i]);
+      assertGt(wiringAfter.libraries[i].code.length, 0);
+    }
   }
 
   function test_execute_revertsWhenAlreadyUpgraded() external {
@@ -195,14 +285,19 @@ abstract contract UpgradeTest is ProtocolV3TestBase {
     IPool pool = IPool(address(_payload.POOL()));
     executePayload(vm, address(_payload));
 
-    (address asset, uint256 amount) = _findSuppliableReserve(pool, true);
+    ReserveConfig memory config = _getE2eReserve(pool, true);
+    _removeCaps(pool, config);
+    uint256 amount = _getTokenAmountByDollarValue(pool, config, 1_000);
     address receiver = address(new SupplyingFlashReceiver());
     // amount for the supply plus an upper bound for the premium
-    deal(asset, receiver, 2 * amount);
+    deal2(config.underlying, receiver, 2 * amount);
 
-    pool.flashLoanSimple(receiver, asset, amount, abi.encode(amount), 0);
+    pool.flashLoanSimple(receiver, config.underlying, amount, abi.encode(amount), 0);
 
-    assertGe(IERC20(pool.getReserveAToken(asset)).balanceOf(receiver), amount - 1);
+    assertEq(
+      IScaledBalanceToken(config.aToken).scaledBalanceOf(receiver),
+      amount.getATokenMintScaledAmount(pool.getReserveNormalizedIncome(config.underlying))
+    );
   }
 
   function test_reentrancy_guardedActionReentryReverts() external {
@@ -210,15 +305,18 @@ abstract contract UpgradeTest is ProtocolV3TestBase {
     IPool pool = IPool(address(_payload.POOL()));
     executePayload(vm, address(_payload));
 
-    (address asset, uint256 amount) = _findSuppliableReserve(pool, false);
-    address rewardsController = IIncentivizedToken(pool.getReserveAToken(asset)).getIncentivesController();
+    ReserveConfig memory config = _getE2eReserve(pool, false);
+    _removeCaps(pool, config);
+    uint256 amount = _getTokenAmountByDollarValue(pool, config, 1_000);
+    address rewardsController = IIncentivizedToken(config.aToken).getIncentivesController();
+    assertNotEq(rewardsController, address(0));
     vm.etch(rewardsController, address(new ReentrantRewardsHook(pool)).code);
 
-    deal(asset, address(this), amount);
-    IERC20(asset).forceApprove(address(pool), amount);
+    deal2(config.underlying, address(this), amount);
+    IERC20(config.underlying).forceApprove(address(pool), amount);
 
     vm.expectRevert(ReentrancyGuardTransient.ReentrancyGuardReentrantCall.selector);
-    pool.supply(asset, amount, address(this), 0);
+    pool.supply(config.underlying, amount, address(this), 0);
   }
 
   function test_gas() external {
@@ -262,20 +360,22 @@ abstract contract UpgradeTest is ProtocolV3TestBase {
   function test_flashloan_upgradeInsideDebtOpeningCallback() public {
     UpgradePayload _payload = UpgradePayload(_getTestPayload());
     IPool pool = IPool(address(_payload.POOL()));
-    FlashBorrow memory flashBorrow = _findFlashBorrow(pool);
+    FlashBorrow memory flashBorrow = _getFlashBorrow(pool);
+    _removeCaps(pool, flashBorrow.collateral);
+    _removeCaps(pool, flashBorrow.asset);
 
     uint256 snapshot = vm.snapshotState();
-    this.flashBorrowProbe(pool, flashBorrow);
+    _openDebtWithFlashLoan(pool, flashBorrow);
     executePayload(vm, address(_payload));
     bytes32[] memory expected = _reserveStates(pool);
     bytes32 expectedUser = _userState(pool, flashBorrow);
     vm.revertToState(snapshot);
 
     _flashPayload = address(_payload);
-    this.flashBorrowProbe(pool, flashBorrow);
+    _openDebtWithFlashLoan(pool, flashBorrow);
 
     assertEq(IPoolRevision(address(pool)).POOL_REVISION(), _payload.NEW_POOL_REVISION());
-    assertGt(IERC20(pool.getReserveVariableDebtToken(flashBorrow.asset)).balanceOf(address(this)), 0);
+    assertGt(IERC20(flashBorrow.asset.variableDebtToken).balanceOf(address(this)), 0);
     assertEq(_userState(pool, flashBorrow), expectedUser);
     bytes32[] memory actual = _reserveStates(pool);
     for (uint256 i = 0; i < actual.length; i++) {
@@ -283,16 +383,16 @@ abstract contract UpgradeTest is ProtocolV3TestBase {
     }
   }
 
-  /// @dev External so `_findFlashBorrow` can try it and roll back.
-  function flashBorrowProbe(IPool pool, FlashBorrow memory flashBorrow) external {
+  function _openDebtWithFlashLoan(IPool pool, FlashBorrow memory flashBorrow) internal {
+    // e-mode first, so a collateral with LTV 0 outside e-mode is enabled on deposit
     if (flashBorrow.eModeCategory != 0) pool.setUserEMode(flashBorrow.eModeCategory);
-    this.supplyProbe(pool, flashBorrow.collateral, flashBorrow.collateralAmount);
-    // supply only auto-enables collateral with LTV > 0 outside e-mode
-    if (flashBorrow.eModeCategory != 0) pool.setUserUseReserveAsCollateral(flashBorrow.collateral, true);
+    _deposit(
+      flashBorrow.collateral, pool, address(this), _getTokenAmountByDollarValue(pool, flashBorrow.collateral, 100_000)
+    );
     address[] memory assets = new address[](1);
-    assets[0] = flashBorrow.asset;
+    assets[0] = flashBorrow.asset.underlying;
     uint256[] memory amounts = new uint256[](1);
-    amounts[0] = flashBorrow.amount;
+    amounts[0] = _getTokenAmountByDollarValue(pool, flashBorrow.asset, 1_000);
     uint256[] memory interestRateModes = new uint256[](1);
     interestRateModes[0] = 2;
     pool.flashLoan({
@@ -307,56 +407,35 @@ abstract contract UpgradeTest is ProtocolV3TestBase {
   }
 
   /**
-   * @dev First collateral / borrowable asset pair for which a mode 2 flashloan of 1% of the collateral value succeeds,
-   * outside e-mode first, then in each configured e-mode category (some markets only lend inside e-mode).
+   * @dev Picks the pair the same way `e2eTest` does: the first collateral with LTV > 0 and the first other borrowable
+   * asset, else the first asset borrowable in an e-mode together with a collateral sharing that e-mode.
    */
-  function _findFlashBorrow(IPool pool) internal returns (FlashBorrow memory flashBorrow) {
-    if (_tryCollaterals(pool, flashBorrow)) return flashBorrow;
-    uint8 emptyCategories;
-    for (uint256 category = 1; category <= type(uint8).max && emptyCategories < 3; category++) {
-      if (pool.getEModeCategoryCollateralConfig(uint8(category)).liquidationThreshold == 0) {
-        ++emptyCategories;
-        continue;
+  function _getFlashBorrow(IPool pool) internal view returns (FlashBorrow memory flashBorrow) {
+    ReserveConfig[] memory configs = _getReservesConfigs(pool);
+    for (uint256 i = 0; i < configs.length; i++) {
+      if (!_includeInE2e(configs[i]) || !configs[i].usageAsCollateralEnabled || configs[i].ltv == 0) continue;
+      for (uint256 j = 0; j < configs.length; j++) {
+        if (i != j && _isFlashBorrowable(configs[j]) && configs[j].borrowingEnabled) {
+          return FlashBorrow({collateral: configs[i], asset: configs[j], eModeCategory: 0});
+        }
       }
-      emptyCategories = 0;
-      flashBorrow.eModeCategory = uint8(category);
-      if (_tryCollaterals(pool, flashBorrow)) return flashBorrow;
+      break;
+    }
+    for (uint256 j = 0; j < configs.length; j++) {
+      if (!_isFlashBorrowable(configs[j]) || !_isBorrowableInAnyEMode(pool, configs[j].underlying)) continue;
+      for (uint256 i = 0; i < configs.length; i++) {
+        if (i == j || !_includeInE2e(configs[i])) continue;
+        uint8 eModeCategory = _getSharedEModeCategory(pool, configs[i].underlying, configs[j].underlying);
+        if (eModeCategory != 0) {
+          return FlashBorrow({collateral: configs[i], asset: configs[j], eModeCategory: eModeCategory});
+        }
+      }
     }
     revert("NO_FLASH_BORROW_PAIR");
   }
 
-  function _tryCollaterals(IPool pool, FlashBorrow memory flashBorrow) internal returns (bool) {
-    address[] memory reserves = pool.getReservesList();
-    for (uint256 i = 0; i < reserves.length; i++) {
-      DataTypes.ReserveConfigurationMap memory config = pool.getConfiguration(reserves[i]);
-      if (!config.getActive() || config.getPaused() || config.getFrozen()) continue;
-      if (flashBorrow.eModeCategory == 0 && config.getLtv() == 0) continue;
-      flashBorrow.collateral = reserves[i];
-      flashBorrow.collateralAmount = 10 ** config.getDecimals();
-      for (uint256 j = 0; j < reserves.length; j++) {
-        if (i != j && _tryFlashBorrow(pool, flashBorrow, reserves[j])) return true;
-      }
-    }
-    return false;
-  }
-
-  function _tryFlashBorrow(IPool pool, FlashBorrow memory flashBorrow, address asset) internal returns (bool ok) {
-    DataTypes.ReserveConfigurationMap memory config = pool.getConfiguration(asset);
-    if (
-      !config.getActive() || config.getPaused() || config.getFrozen() || !config.getBorrowingEnabled()
-        || !config.getFlashLoanEnabled()
-    ) return false;
-    IAaveOracle oracle = IAaveOracle(pool.ADDRESSES_PROVIDER().getPriceOracle());
-    flashBorrow.asset = asset;
-    flashBorrow.amount =
-      (oracle.getAssetPrice(flashBorrow.collateral) * 10 ** config.getDecimals()) / 100 / oracle.getAssetPrice(asset);
-    if (flashBorrow.amount == 0) return false;
-
-    uint256 snapshot = vm.snapshotState();
-    try this.flashBorrowProbe(pool, flashBorrow) {
-      ok = true;
-    } catch {}
-    vm.revertToState(snapshot);
+  function _isFlashBorrowable(ReserveConfig memory config) internal pure returns (bool) {
+    return _includeInE2e(config) && config.isFlashloanable;
   }
 
   function _userState(IPool pool, FlashBorrow memory flashBorrow) internal view returns (bytes32) {
@@ -364,8 +443,8 @@ abstract contract UpgradeTest is ProtocolV3TestBase {
       abi.encode(
         _accountData(pool),
         pool.getUserConfiguration(address(this)).data,
-        IERC20(pool.getReserveAToken(flashBorrow.collateral)).balanceOf(address(this)),
-        IERC20(pool.getReserveVariableDebtToken(flashBorrow.asset)).balanceOf(address(this))
+        IERC20(flashBorrow.collateral.aToken).balanceOf(address(this)),
+        IERC20(flashBorrow.asset.variableDebtToken).balanceOf(address(this))
       )
     );
   }
@@ -375,23 +454,22 @@ abstract contract UpgradeTest is ProtocolV3TestBase {
     return keccak256(abi.encode(a, b, c, d, e, f));
   }
 
-  function _flashLoanAssets(IPool pool) internal returns (address[] memory assets, uint256[] memory amounts) {
-    address[] memory reserves = pool.getReservesList();
-    assets = new address[](reserves.length);
-    amounts = new uint256[](reserves.length);
+  function _flashLoanAssets(IPool pool) internal view returns (address[] memory assets, uint256[] memory amounts) {
+    ReserveConfig[] memory configs = _getReservesConfigs(pool);
+    assets = new address[](configs.length);
+    amounts = new uint256[](configs.length);
     uint256 length;
-    for (uint256 i = 0; i < reserves.length; i++) {
-      DataTypes.ReserveConfigurationMap memory configuration = pool.getConfiguration(reserves[i]);
+    for (uint256 i = 0; i < configs.length; i++) {
       if (
-        configuration.getPaused() || !configuration.getActive() || !configuration.getFlashLoanEnabled()
-          || _isExcludedFromFlashLoan(reserves[i])
+        configs[i].isPaused || !configs[i].isActive || !configs[i].isFlashloanable
+          || _isExcludedFromFlashLoan(configs[i].underlying)
       ) {
         continue;
       }
       // half the virtual balance: the exact amount doesn't matter, it only has to be non-zero
-      uint256 amount = pool.getVirtualUnderlyingBalance(reserves[i]) / 2;
+      uint256 amount = configs[i].virtualBalance / 2;
       if (amount == 0) continue;
-      assets[length] = reserves[i];
+      assets[length] = configs[i].underlying;
       amounts[length] = amount;
       ++length;
     }
@@ -417,46 +495,99 @@ abstract contract UpgradeTest is ProtocolV3TestBase {
     address[] memory reserves = pool.getReservesList();
     states = new bytes32[](reserves.length);
     for (uint256 i = 0; i < reserves.length; i++) {
-      states[i] = keccak256(abi.encode(pool.getReserveData(reserves[i]), pool.getVirtualUnderlyingBalance(reserves[i])));
+      states[i] = keccak256(
+        abi.encode(
+          pool.getReserveData(reserves[i]),
+          pool.getVirtualUnderlyingBalance(reserves[i]),
+          pool.getReserveDeficit(reserves[i]),
+          pool.getLiquidationGracePeriod(reserves[i])
+        )
+      );
     }
   }
 
   /// @dev Assets whose transfers revert at the fork block, which would fail the flashloan before its callback.
-  function _isExcludedFromFlashLoan(address) internal view virtual returns (bool) {
+  function _isExcludedFromFlashLoan(address) internal pure virtual returns (bool) {
     return false;
   }
 
-  /// @dev External so `_findSuppliableReserve` can try it and roll back: `deal` and supply both fail on some assets.
-  function supplyProbe(IPool pool, address asset, uint256 amount) external {
-    deal(asset, address(this), amount);
-    IERC20(asset).forceApprove(address(pool), amount);
-    pool.supply(asset, amount, address(this), 0);
+  /// @dev First reserve `e2eTest` would include, optionally flashloanable with enough virtual balance for $1k.
+  function _getE2eReserve(IPool pool, bool flashLoanable) internal view returns (ReserveConfig memory) {
+    ReserveConfig[] memory configs = _getReservesConfigs(pool);
+    for (uint256 i = 0; i < configs.length; i++) {
+      if (!_includeInE2e(configs[i])) continue;
+      if (
+        flashLoanable
+          && (!configs[i].isFlashloanable
+            || configs[i].virtualBalance < _getTokenAmountByDollarValue(pool, configs[i], 1_000))
+      ) continue;
+      return configs[i];
+    }
+    revert("NO_E2E_RESERVE");
   }
 
-  function _findSuppliableReserve(IPool pool, bool flashLoanable) internal returns (address, uint256) {
-    address[] memory reserves = pool.getReservesList();
-    for (uint256 i = 0; i < reserves.length; i++) {
-      DataTypes.ReserveConfigurationMap memory configuration = pool.getConfiguration(reserves[i]);
-      if (
-        !configuration.getActive() || configuration.getPaused() || configuration.getFrozen()
-          || (flashLoanable && !configuration.getFlashLoanEnabled())
-      ) {
+  /// @dev Same as `e2eTestAsset`: caps should not prevent testing.
+  function _removeCaps(IPool pool, ReserveConfig memory config) internal {
+    IPoolAddressesProvider addressesProvider = IPoolAddressesProvider(pool.ADDRESSES_PROVIDER());
+    IPoolConfigurator poolConfigurator = IPoolConfigurator(addressesProvider.getPoolConfigurator());
+    vm.startPrank(addressesProvider.getACLAdmin());
+    if (config.supplyCap != 0) poolConfigurator.setSupplyCap(config.underlying, 0);
+    if (config.borrowCap != 0) poolConfigurator.setBorrowCap(config.underlying, 0);
+    vm.stopPrank();
+  }
+
+  /// @dev Configured categories, enumerated like aave-helpers `_writeEModeConfigs`: stops after three empty ids in a row.
+  function _getEModeCategoryIds(IPool38 pool) internal view returns (uint8[] memory ids) {
+    ids = new uint8[](256);
+    uint256 length;
+    uint8 emptyCounter;
+    for (uint256 id = 0; id <= type(uint8).max; id++) {
+      if (pool.getEModeCategoryCollateralConfig(uint8(id)).liquidationThreshold == 0) {
+        if (++emptyCounter > 2) break;
         continue;
       }
-      if (IIncentivizedToken(pool.getReserveAToken(reserves[i])).getIncentivesController() == address(0)) continue;
-
-      uint256 amount = 10 ** configuration.getDecimals();
-      if (flashLoanable && pool.getVirtualUnderlyingBalance(reserves[i]) < amount) continue;
-
-      uint256 snapshot = vm.snapshotState();
-      bool ok;
-      try this.supplyProbe(pool, reserves[i], amount) {
-        ok = true;
-      } catch {}
-      vm.revertToState(snapshot);
-      if (ok) return (reserves[i], amount);
+      emptyCounter = 0;
+      ids[length++] = uint8(id);
     }
-    revert("NO_SUPPLIABLE_RESERVE");
+    assembly {
+      mstore(ids, length)
+    }
+  }
+
+  function _getEModeCategory(IPool38 pool, uint8 id) internal view returns (DataTypes38.EModeCategory memory category) {
+    DataTypes38.CollateralConfig memory collateralConfig = pool.getEModeCategoryCollateralConfig(id);
+    category.ltv = collateralConfig.ltv;
+    category.liquidationThreshold = collateralConfig.liquidationThreshold;
+    category.liquidationBonus = collateralConfig.liquidationBonus;
+    category.collateralBitmap = pool.getEModeCategoryCollateralBitmap(id);
+    category.isolated = pool.getIsEModeCategoryIsolated(id);
+    category.label = pool.getEModeCategoryLabel(id);
+    category.borrowableBitmap = pool.getEModeCategoryBorrowableBitmap(id);
+    category.ltvzeroBitmap = pool.getEModeCategoryLtvzeroBitmap(id);
+  }
+
+  function _getPoolWiring(UpgradePayload _payload) internal view returns (PoolWiring memory wiring) {
+    IPoolAddressesProvider38 addressesProvider = _payload.POOL_ADDRESSES_PROVIDER();
+    IPool38 pool = _payload.POOL();
+    wiring.addressesProviderEntries = new address[](ADDRESSES_PROVIDER_IDS.length);
+    for (uint256 i = 0; i < ADDRESSES_PROVIDER_IDS.length; i++) {
+      wiring.addressesProviderEntries[i] = addressesProvider.getAddress(ADDRESSES_PROVIDER_IDS[i]);
+    }
+    wiring.marketId = addressesProvider.getMarketId();
+    wiring.poolConfiguratorImpl = _getImplementation(addressesProvider.getPoolConfigurator());
+    wiring.addressesProvider = address(pool.ADDRESSES_PROVIDER());
+    wiring.interestRateStrategy = pool.RESERVE_INTEREST_RATE_STRATEGY();
+    wiring.flashLoanPremiumTotal = pool.FLASHLOAN_PREMIUM_TOTAL();
+    wiring.flashLoanPremiumToProtocol = pool.FLASHLOAN_PREMIUM_TO_PROTOCOL();
+    wiring.maxNumberReserves = pool.MAX_NUMBER_RESERVES();
+    wiring.reservesCount = pool.getReservesCount();
+    wiring.libraries = [
+      pool.getBorrowLogic(),
+      pool.getFlashLoanLogic(),
+      pool.getLiquidationLogic(),
+      pool.getPoolLogic(),
+      pool.getSupplyLogic()
+    ];
   }
 
   function _getImplementation(address proxy) internal view returns (address) {

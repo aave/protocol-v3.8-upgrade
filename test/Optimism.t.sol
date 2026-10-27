@@ -18,7 +18,7 @@ contract OptimismTest is UpgradeTest("optimism", 158756269) {
   }
 
   // sUSD transfers revert with "sUSD retired"
-  function _isExcludedFromFlashLoan(address asset) internal view override returns (bool) {
+  function _isExcludedFromFlashLoan(address asset) internal pure override returns (bool) {
     return asset == AaveV3OptimismAssets.sUSD_UNDERLYING;
   }
 }

@@ -18,7 +18,7 @@ contract CeloTest is UpgradeTest("celo", 81210567) {
   }
 
   // CELO moves native balance through a Celo precompile that forge only runs with `--celo`
-  function _isExcludedFromFlashLoan(address asset) internal view override returns (bool) {
+  function _isExcludedFromFlashLoan(address asset) internal pure override returns (bool) {
     return asset == AaveV3CeloAssets.CELO_UNDERLYING;
   }
 }
