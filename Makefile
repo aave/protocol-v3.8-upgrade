@@ -24,12 +24,10 @@ git-diff :
 		{ if (in_diff_block && !/^diff --git/) { buffer = buffer $$0 "\n" } } \
 		END { if (in_diff_block && skip_block == 0) { printf "%s", buffer } }' > diffs/${out}.diff
 
-deploy-ledger :; forge script $(if $(filter zksync,${chain}),--zksync) ${contract} --rpc-url ${chain} $(if ${dry},--sender 0x73AF3bcf944a6559933396c1577B257e2054D935 -vvvv, --ledger --mnemonic-indexes ${MNEMONIC_INDEX} --sender ${LEDGER_SENDER} --verify -vvvv --slow --broadcast) $(if ${legacy}, --legacy, )
-deploy-pk :; forge script $(if $(filter zksync,${chain}),--zksync) ${contract} --rpc-url ${chain} $(if ${dry},--sender 0x73AF3bcf944a6559933396c1577B257e2054D935 -vvvv, --private-key ${PRIVATE_KEY} --verify -vvvv --slow --broadcast)
+deploy-ledger :; FOUNDRY_PROFILE=default forge script $(if $(filter zksync,${chain}),--zksync) ${contract} --rpc-url ${chain} $(if ${dry},--sender 0x73AF3bcf944a6559933396c1577B257e2054D935 -vvvv, --ledger --mnemonic-indexes ${MNEMONIC_INDEX} --sender ${LEDGER_SENDER} --verify -vvvv --slow --broadcast) $(if ${legacy}, --legacy, )
 
 VERIFIER_ink = --verifier blockscout --verifier-url 'https://explorer.inkonchain.com/api/'
 VERIFIER_xLayer = --verifier oklink --verifier-url 'https://www.oklink.com/api/v5/explorer/contract/verify-source-code-plugin/xlayer'
 #  --resume --verify --etherscan-api-key ${ETHERSCAN_API_KEY_ARBITRUM}
-deploy :; forge script script/Deploy.s.sol:Deploy${chain} --rpc-url ${chain} --ledger --mnemonic-indexes ${MNEMONIC_INDEX} --sender ${LEDGER_SENDER} --slow --broadcast --verify $(VERIFIER_$(chain)) $(if ${resume}, --resume, )
-deploy-lido :; forge script script/Deploy.s.sol:Deploylido --rpc-url mainnet --ledger --mnemonic-indexes ${MNEMONIC_INDEX} --sender ${LEDGER_SENDER} --slow --broadcast --verify
-deploy-etherfi :; forge script script/Deploy.s.sol:Deployetherfi --rpc-url mainnet --ledger --mnemonic-indexes ${MNEMONIC_INDEX} --sender ${LEDGER_SENDER} --slow --broadcast --verify
+deploy :; FOUNDRY_PROFILE=default forge script script/Deploy.s.sol:Deploy${market} --rpc-url ${chain} --ledger --mnemonic-indexes ${MNEMONIC_INDEX} --sender ${LEDGER_SENDER} --slow --broadcast --verify $(VERIFIER_$(chain)) $(if ${resume}, --resume, )
+deploy-lido :; FOUNDRY_PROFILE=default forge script script/Deploy.s.sol:DeployLido --rpc-url mainnet --ledger --mnemonic-indexes ${MNEMONIC_INDEX} --sender ${LEDGER_SENDER} --slow --broadcast --verify

@@ -1,5 +1,5 @@
 {
-  "name": "protocol-v3.4-upgrade",
+  "name": "protocol-v3.8-upgrade",
   "version": "1.0.0",
   "description": "**Foundry is a blazing fast, portable and modular toolkit for Ethereum application development written in Rust.**",
   "main": "index.js",
@@ -15,7 +15,7 @@
   "dependencies": {
     "@aave-dao/aave-address-book": "^4.48.0",
     "@aave-dao/aave-helpers-js": "^1.0.13",
-    "@bgd-labs/toolbox": "^0.2.25",
+    "@aave-dao/toolbox": "^0.8.1",
     "p-queue": "^8.1.0",
     "prettier": "^3.5.3"
   }

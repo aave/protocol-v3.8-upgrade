@@ -9,7 +9,7 @@ import {DeploymentLibrary} from "../script/Deploy.s.sol";
 import {UpgradeTest} from "./UpgradeTest.t.sol";
 import {Deployments} from "../src/Deployments.sol";
 
-contract InkTest is UpgradeTest("ink", 41446726) {
+contract InkTest is UpgradeTest("ink", 59624995) {
   function executePayload(Vm vm, address payload) internal virtual override {
     GovV3Helpers.executePayload(
       vm, payload, address(GovV3Helpers.getPayloadsController(AaveV3InkWhitelabel.POOL, block.chainid))

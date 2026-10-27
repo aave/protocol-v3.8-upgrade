@@ -5,7 +5,7 @@ import {
   parseBlockscoutStyleSourceCode,
   parseEtherscanStyleSourceCode,
   StandardJsonInput,
-} from "@bgd-labs/toolbox";
+} from "@aave-dao/toolbox";
 import {
   mkdirSync,
   readdirSync,

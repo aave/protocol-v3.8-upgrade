@@ -5,7 +5,7 @@
       "aToken": "0xC3e77dC389537Db1EEc7C33B95Cf3beECA71A209",
       "aTokenName": "Aave Celo CELO",
       "aTokenSymbol": "aCelCELO",
-      "aTokenUnderlyingBalance": "1753868304307014942079363",
+      "aTokenUnderlyingBalance": "687333955883416683685040",
       "borrowCap": 1,
       "borrowingEnabled": false,
       "decimals": 18,
@@ -22,7 +22,7 @@
       "oracle": "0x0568fD19986748cEfF3301e55c0eb1E729E0Ab7e",
       "oracleDecimals": 8,
       "oracleDescription": "CELO / USD",
-      "oracleLatestAnswer": "7868000",
+      "oracleLatestAnswer": "8301618",
       "reserveFactor": 2000,
       "supplyCap": 1,
       "symbol": "CELO",
@@ -31,14 +31,14 @@
       "variableDebtToken": "0xaEa37B42955De2Ba2E4AF6581E46349bCD3Ea2d6",
       "variableDebtTokenName": "Aave Celo Variable Debt CELO",
       "variableDebtTokenSymbol": "variableDebtCelCELO",
-      "virtualBalance": "1753868304307014942079363"
+      "virtualBalance": "687333955883416683685040"
     },
     "0x48065fbBE25f71C9282ddf5e1cD6D6A887483D5e": {
       "aToken": "0xDeE98402A302e4D707fB9bf2bac66fAEEc31e8Df",
       "aTokenName": "Aave Celo USDT",
       "aTokenSymbol": "aCelUSDT",
-      "aTokenUnderlyingBalance": "5281422243915",
-      "borrowCap": 7200000,
+      "aTokenUnderlyingBalance": "1388918719711",
+      "borrowCap": 5220000,
       "borrowingEnabled": true,
       "decimals": 6,
       "id": 1,
@@ -54,54 +54,54 @@
       "oracle": "0x6e3d991C965364481796116dE68A8036d1b3Ecd0",
       "oracleDecimals": 8,
       "oracleDescription": "Capped USDT/USD",
-      "oracleLatestAnswer": "99903113",
+      "oracleLatestAnswer": "99890783",
       "reserveFactor": 2000,
-      "supplyCap": 24000000,
+      "supplyCap": 11600000,
       "symbol": "USD₮",
       "underlying": "0x48065fbBE25f71C9282ddf5e1cD6D6A887483D5e",
       "usageAsCollateralEnabled": true,
       "variableDebtToken": "0xE15324a9887999803b931Ac45aa89a94A9750052",
       "variableDebtTokenName": "Aave Celo Variable Debt USDT",
       "variableDebtTokenSymbol": "variableDebtCelUSDT",
-      "virtualBalance": "5281422243915"
+      "virtualBalance": "1388918719711"
     },
     "0x765DE816845861e75A25fCA122bb6898B8B1282a": {
       "aToken": "0xBba98352628B0B0c4b40583F593fFCb630935a45",
       "aTokenName": "Aave Celo cUSD",
       "aTokenSymbol": "aCelcUSD",
-      "aTokenUnderlyingBalance": "393935007646444232845151",
-      "borrowCap": 1170000,
+      "aTokenUnderlyingBalance": "119866380738539842557018",
+      "borrowCap": 1,
       "borrowingEnabled": true,
       "decimals": 18,
       "id": 3,
       "interestRateStrategy": "0x8B62D241Bf59f40991DCd18531683156d7013355",
       "isActive": true,
       "isFlashloanable": true,
-      "isFrozen": false,
+      "isFrozen": true,
       "isPaused": false,
       "liquidationBonus": 0,
       "liquidationProtocolFee": 0,
       "liquidationThreshold": 0,
       "ltv": 0,
-      "oracle": "0xdCdA3E7E90fe827776b8FDaEa3C5977F123354DA",
+      "oracle": "0x1E1Ef58d6286739a666C9E0eA98af77e65c5f1C1",
       "oracleDecimals": 8,
-      "oracleDescription": "Capped cUSD/USD",
-      "oracleLatestAnswer": "99973714",
-      "reserveFactor": 1500,
-      "supplyCap": 1300000,
+      "oracleDescription": "Fixed USDm/USD",
+      "oracleLatestAnswer": "100000000",
+      "reserveFactor": 10000,
+      "supplyCap": 1,
       "symbol": "USDm",
       "underlying": "0x765DE816845861e75A25fCA122bb6898B8B1282a",
       "usageAsCollateralEnabled": false,
       "variableDebtToken": "0x05Ee3d1fBACbDbA1259946033cd7A42FDFcCcF0d",
       "variableDebtTokenName": "Aave Celo Variable Debt cUSD",
       "variableDebtTokenSymbol": "variableDebtCelcUSD",
-      "virtualBalance": "393935007646444232845151"
+      "virtualBalance": "119866380738539842557018"
     },
     "0xD221812de1BD094f35587EE8E174B07B6167D9Af": {
       "aToken": "0xf385280F36e009C157697D25E0B802EfaBfd789c",
       "aTokenName": "Aave Celo WETH",
       "aTokenSymbol": "aCelWETH",
-      "aTokenUnderlyingBalance": "2186543633963167363082",
+      "aTokenUnderlyingBalance": "582669647227040888497",
       "borrowCap": 900,
       "borrowingEnabled": true,
       "decimals": 18,
@@ -118,23 +118,23 @@
       "oracle": "0x1FcD30A73D67639c1cD89ff5746E7585731c083B",
       "oracleDecimals": 8,
       "oracleDescription": "ETH / USD",
-      "oracleLatestAnswer": "202469510238",
+      "oracleLatestAnswer": "234825000000",
       "reserveFactor": 1500,
-      "supplyCap": 3000,
+      "supplyCap": 2100,
       "symbol": "WETH",
       "underlying": "0xD221812de1BD094f35587EE8E174B07B6167D9Af",
       "usageAsCollateralEnabled": true,
       "variableDebtToken": "0x6508cff7c5FbA053Af00a4E894500e6fA00274B7",
       "variableDebtTokenName": "Aave Celo Variable Debt WETH",
       "variableDebtTokenSymbol": "variableDebtCelWETH",
-      "virtualBalance": "2186543633963167363082"
+      "virtualBalance": "582669647227040888497"
     },
     "0xD8763CBa276a3738E6DE85b4b3bF5FDed6D6cA73": {
       "aToken": "0x34c02571094e08E935B8cf8dC10F1Ad6795f1f81",
       "aTokenName": "Aave Celo cEUR",
       "aTokenSymbol": "aCelcEUR",
-      "aTokenUnderlyingBalance": "11708496125762031273299",
-      "borrowCap": 144000,
+      "aTokenUnderlyingBalance": "1111084475034142170722",
+      "borrowCap": 90000,
       "borrowingEnabled": true,
       "decimals": 18,
       "id": 2,
@@ -150,23 +150,23 @@
       "oracle": "0x3D207061Dbe8E2473527611BFecB87Ff12b28dDa",
       "oracleDecimals": 8,
       "oracleDescription": "EUR / USD",
-      "oracleLatestAnswer": "114688000",
+      "oracleLatestAnswer": "111376500",
       "reserveFactor": 1500,
-      "supplyCap": 160000,
+      "supplyCap": 100000,
       "symbol": "EURm",
       "underlying": "0xD8763CBa276a3738E6DE85b4b3bF5FDed6D6cA73",
       "usageAsCollateralEnabled": false,
       "variableDebtToken": "0x5C2B7EB5886B3cEc5CCE1019E34493da33291aF5",
       "variableDebtTokenName": "Aave Celo Variable Debt cEUR",
       "variableDebtTokenSymbol": "variableDebtCelcEUR",
-      "virtualBalance": "11708496125762031273299"
+      "virtualBalance": "1111084475034142170722"
     },
     "0xcebA9300f2b948710d2653dD7B07f33A8B32118C": {
       "aToken": "0xFF8309b9e99bfd2D4021bc71a362aBD93dBd4785",
       "aTokenName": "Aave Celo USDC",
       "aTokenSymbol": "aCelUSDC",
-      "aTokenUnderlyingBalance": "55241213574",
-      "borrowCap": 3150000,
+      "aTokenUnderlyingBalance": "20180358494",
+      "borrowCap": 1800000,
       "borrowingEnabled": true,
       "decimals": 6,
       "id": 0,
@@ -182,16 +182,16 @@
       "oracle": "0xBF704f2FfdB856805cE64D085cD50427823696D7",
       "oracleDecimals": 8,
       "oracleDescription": "Capped USDC/USD",
-      "oracleLatestAnswer": "99955809",
+      "oracleLatestAnswer": "99978110",
       "reserveFactor": 1000,
-      "supplyCap": 3500000,
+      "supplyCap": 2000000,
       "symbol": "USDC",
       "underlying": "0xcebA9300f2b948710d2653dD7B07f33A8B32118C",
       "usageAsCollateralEnabled": true,
       "variableDebtToken": "0xDbe517c0FA6467873B684eCcbED77217E471E862",
       "variableDebtTokenName": "Aave Celo Variable Debt USDC",
       "variableDebtTokenSymbol": "variableDebtCelUSDC",
-      "virtualBalance": "55241213574"
+      "virtualBalance": "20180358494"
     }
   },
   "strategies": {
@@ -213,11 +213,11 @@
     },
     "0x765DE816845861e75A25fCA122bb6898B8B1282a": {
       "address": "0x8B62D241Bf59f40991DCd18531683156d7013355",
-      "baseVariableBorrowRate": "0",
-      "maxVariableBorrowRate": "790000000000000000000000000",
+      "baseVariableBorrowRate": "50000000000000000000000000",
+      "maxVariableBorrowRate": "1090000000000000000000000000",
       "optimalUsageRatio": "900000000000000000000000000",
       "variableRateSlope1": "40000000000000000000000000",
-      "variableRateSlope2": "750000000000000000000000000"
+      "variableRateSlope2": "1000000000000000000000000000"
     },
     "0xD221812de1BD094f35587EE8E174B07B6167D9Af": {
       "address": "0x8B62D241Bf59f40991DCd18531683156d7013355",
@@ -260,68 +260,16 @@
       "nonceDiff": null,
       "stateDiff": {
         "0x0000000000000000000000000000000000000000000000000000000000000000": {
-          "previousValue": "0x000000000000000000000000000000000000000000000000000000000000000a",
-          "newValue": "0x000000000000000000000000000000000000000000000000000000000000000b"
+          "previousValue": "0x000000000000000000000000000000000000000000000000000000000000000b",
+          "newValue": "0x000000000000000000000000000000000000000000000000000000000000000c"
         },
         "0x0000000000000000000000000000000000000000000000000000000000000001": {
           "previousValue": "0x0000000000000000000000000000000000000000000000000000000000000000",
           "newValue": "0x0000000000000000000000000000000000000000000000000000000000000000"
         },
         "0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc": {
-          "previousValue": "0x0000000000000000000000004a1ddf2757666a474ccceba735a9f69ed22b75a8",
-          "newValue": "0x000000000000000000000000736a299843ec1bb6aa94e032489177ae0459c744"
-        },
-        "0x580a5a1f9ab45573c560388e4e2e96438abfd476777c3de2bdc12d439e48932b": {
-          "previousValue": "0x1000000000000000000000000000013d62000011da5005dca512000000000000",
-          "newValue": "0x1000000000000000000000000000013d62000011da5005dc8512000000000000"
-        },
-        "0x91df18aa186d49708ac6c8dda3c98fa154fc3bf408843a8cf4af89910b1d0448": {
-          "previousValue": "0x100000000000000000000003e80003567e00003010b003e8a50629041e781d4c",
-          "newValue": "0x100000000000000000000003e80003567e00003010b003e8850629041e781d4c"
-        },
-        "0xa16e061dfbd02d978559301c23e8885c8661c29c8a1b884991d385f6340b5af1": {
-          "previousValue": "0x1000000000000000000000000000002710000002328005dca512000000000000",
-          "newValue": "0x1000000000000000000000000000002710000002328005dc8512000000000000"
-        },
-        "0xf54036dc390a53fcefe11f31de56ed35edaa6741fe9bf839a208c2cec27512de": {
-          "previousValue": "0x100000000000000000000003e80016e36000006ddd0007d0a50629041e781d4c",
-          "newValue": "0x100000000000000000000003e80016e36000006ddd0007d0850629041e781d4c"
-        },
-        "0xf66b05930311b16f3301fc83092844e762abfd7ebeba455fcce7dcf9b4c90364": {
-          "previousValue": "0x10002faf0800000000000003e800000000100000000107d081122af817d4157c",
-          "newValue": "0x100000000000000000000003e800000000100000000107d081122af817d4157c"
-        },
-        "0xf66b05930311b16f3301fc83092844e762abfd7ebeba455fcce7dcf9b4c9036d": {
-          "previousValue": "0x00000000000000000000000000000000000000000000000000000000001fc534",
-          "newValue": "0x0000000000000000000000000000000000000000000000000000000000000000"
-        }
-      }
-    },
-    "0x7567e3434cc1bef724ab595e6072367ef4914691": {
-      "label": null,
-      "contract": null,
-      "balanceDiff": null,
-      "nonceDiff": null,
-      "stateDiff": {
-        "0x0000000000000000000000000000000000000000000000000000000000000000": {
-          "previousValue": "0x0000000000000000000000000000000000000000000000000000000000000007",
-          "newValue": "0x0000000000000000000000000000000000000000000000000000000000000008"
-        },
-        "0x0000000000000000000000000000000000000000000000000000000000000001": {
-          "previousValue": "0x0000000000000000000000000000000000000000000000000000000000000000",
-          "newValue": "0x0000000000000000000000000000000000000000000000000000000000000000"
-        },
-        "0x0000000000000000000000000000000000000000000000000000000000000034": {
-          "previousValue": "0x0000000000000000000000009f7cf9417d5251c59fe94fb9147feee1aad9cea5",
-          "newValue": "0x0000000000000000000000009f7cf9417d5251c59fe94fb9147feee1aad9cea5"
-        },
-        "0x0000000000000000000000000000000000000000000000000000000000000035": {
-          "previousValue": "0x0000000000000000000000003e59a31363e2ad014dcbc521c4a0d5757d9f3402",
-          "newValue": "0x0000000000000000000000003e59a31363e2ad014dcbc521c4a0d5757d9f3402"
-        },
-        "0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc": {
-          "previousValue": "0x0000000000000000000000006fddde45f777a4e461b0721a578b169b44579623",
-          "newValue": "0x000000000000000000000000ff42ce30054dce7dc7c1282a9a497aa58eabce99"
+          "previousValue": "0x000000000000000000000000736a299843ec1bb6aa94e032489177ae0459c744",
+          "newValue": "0x0000000000000000000000005986c69787a35766c64e198f8c6f3297b2c59389"
         }
       }
     },
@@ -331,13 +279,13 @@
       "balanceDiff": null,
       "nonceDiff": null,
       "stateDiff": {
-        "0x2d72af3c1b2b2956e6f694fb741556d5ca9524373974378cdbec16afa8b84164": {
-          "previousValue": "0x0069cb9881000000000002000000000000000000000000000000000000000000",
-          "newValue": "0x0069cb9881000000000003000000000000000000000000000000000000000000"
+        "0x47d4745e02b343689a5e7ac121d2a352b7a15c10328a8759fd7d4cf0999002bb": {
+          "previousValue": "0x006ae0e44d000000000002000000000000000000000000000000000000000000",
+          "newValue": "0x006ae0e44d000000000003000000000000000000000000000000000000000000"
         },
-        "0x2d72af3c1b2b2956e6f694fb741556d5ca9524373974378cdbec16afa8b84165": {
-          "previousValue": "0x000000000000000000093a8000000000000069f9bd0200000000000000000000",
-          "newValue": "0x000000000000000000093a8000000000000069f9bd0200000000000069cb9882"
+        "0x47d4745e02b343689a5e7ac121d2a352b7a15c10328a8759fd7d4cf0999002bc": {
+          "previousValue": "0x000000000000000000093a800000000000006b0f08ce00000000000000000000",
+          "newValue": "0x000000000000000000093a800000000000006b0f08ce0000000000006ae0e44e"
         }
       }
     }
@@ -345,52 +293,8 @@
   "logs": [
     {
       "topics": [
-        "0x74adf6aaf58c08bc4f993640385e136522375ea3d1589a10d02adbb906c67d1c"
-      ],
-      "data": "0x000000000000000000000000ceba9300f2b948710d2653dd7b07f33a8b32118c0000000000000000000000000000000000000000000000000000000000000000",
-      "emitter": "0x7567E3434CC1BEf724AB595e6072367Ef4914691"
-    },
-    {
-      "topics": [
-        "0x74adf6aaf58c08bc4f993640385e136522375ea3d1589a10d02adbb906c67d1c"
-      ],
-      "data": "0x00000000000000000000000048065fbbe25f71c9282ddf5e1cd6d6a887483d5e0000000000000000000000000000000000000000000000000000000000000000",
-      "emitter": "0x7567E3434CC1BEf724AB595e6072367Ef4914691"
-    },
-    {
-      "topics": [
-        "0x74adf6aaf58c08bc4f993640385e136522375ea3d1589a10d02adbb906c67d1c"
-      ],
-      "data": "0x000000000000000000000000d8763cba276a3738e6de85b4b3bf5fded6d6ca730000000000000000000000000000000000000000000000000000000000000000",
-      "emitter": "0x7567E3434CC1BEf724AB595e6072367Ef4914691"
-    },
-    {
-      "topics": [
-        "0x74adf6aaf58c08bc4f993640385e136522375ea3d1589a10d02adbb906c67d1c"
-      ],
-      "data": "0x000000000000000000000000765de816845861e75a25fca122bb6898b8b1282a0000000000000000000000000000000000000000000000000000000000000000",
-      "emitter": "0x7567E3434CC1BEf724AB595e6072367Ef4914691"
-    },
-    {
-      "topics": [
-        "0xaef84d3b40895fd58c561f3998000f0583abb992a52fbdc99ace8e8de4d676a5",
-        "0x000000000000000000000000471ece3750da237f93b8e339c536989b8978a438"
-      ],
-      "data": "0x0000000000000000000000000000000000000000000000000000000000000000",
-      "emitter": "0x3E59A31363E2ad014dcbc521c4a0d5757d9f3402"
-    },
-    {
-      "topics": [
-        "0x6824a6c7fbc10d2979b1f1ccf2dd4ed0436541679a661dedb5c10bd4be830682",
-        "0x000000000000000000000000471ece3750da237f93b8e339c536989b8978a438"
-      ],
-      "data": "0x0000000000000000000000000000000000000000000000000000000002faf0800000000000000000000000000000000000000000000000000000000000000000",
-      "emitter": "0x7567E3434CC1BEf724AB595e6072367Ef4914691"
-    },
-    {
-      "topics": [
         "0xbc7cd75a20ee27fd9adebab32041f755214dbc6bffa90cc0225b39da2e5c2d3b",
-        "0x000000000000000000000000736a299843ec1bb6aa94e032489177ae0459c744"
+        "0x0000000000000000000000005986c69787a35766c64e198f8c6f3297b2c59389"
       ],
       "data": "0x",
       "emitter": "0x3E59A31363E2ad014dcbc521c4a0d5757d9f3402"
@@ -398,25 +302,8 @@
     {
       "topics": [
         "0x90affc163f1a2dfedcd36aa02ed992eeeba8100a4014f0b4cdc20ea265a66627",
-        "0x0000000000000000000000004a1ddf2757666a474ccceba735a9f69ed22b75a8",
-        "0x000000000000000000000000736a299843ec1bb6aa94e032489177ae0459c744"
-      ],
-      "data": "0x",
-      "emitter": "0x9F7Cf9417D5251C59fE94fB9147feEe1aAd9Cea5"
-    },
-    {
-      "topics": [
-        "0xbc7cd75a20ee27fd9adebab32041f755214dbc6bffa90cc0225b39da2e5c2d3b",
-        "0x000000000000000000000000ff42ce30054dce7dc7c1282a9a497aa58eabce99"
-      ],
-      "data": "0x",
-      "emitter": "0x7567E3434CC1BEf724AB595e6072367Ef4914691"
-    },
-    {
-      "topics": [
-        "0x8932892569eba59c8382a089d9b732d1f49272878775235761a2a6b0309cd465",
-        "0x0000000000000000000000006fddde45f777a4e461b0721a578b169b44579623",
-        "0x000000000000000000000000ff42ce30054dce7dc7c1282a9a497aa58eabce99"
+        "0x000000000000000000000000736a299843ec1bb6aa94e032489177ae0459c744",
+        "0x0000000000000000000000005986c69787a35766c64e198f8c6f3297b2c59389"
       ],
       "data": "0x",
       "emitter": "0x9F7Cf9417D5251C59fE94fB9147feEe1aAd9Cea5"
@@ -424,16 +311,16 @@
     {
       "topics": [
         "0x528c26f4cc05f95dc8bad30284946548f08ec44f7dd536473f28b08c65334cdd",
-        "0x000000000000000000000000b3cf4b51fee1cc092a2fe5fb98e392463dbd5f29"
+        "0x000000000000000000000000acab7db3bad6fbff778821a595cde38d82d76ac8"
       ],
-      "data": "0x000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000069cb9882000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000001200000000000000000000000000000000000000000000000000000000000000009657865637574652829000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+      "data": "0x000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c00000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000006ae0e44e000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000001200000000000000000000000000000000000000000000000000000000000000009657865637574652829000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
       "emitter": "0x1dF462e2712496373A347f8ad10802a5E95f053D"
     },
     {
       "topics": [
         "0xda6084bb0aa902a7f6da10ba185d4aa129414651c90772417eff02a52112af2a"
       ],
-      "data": "0x000000000000000000000000000000000000000000000000000000000000000b",
+      "data": "0x0000000000000000000000000000000000000000000000000000000000000010",
       "emitter": "0xE48E10834C04E394A04BF22a565D063D40b9FA42"
     }
   ]

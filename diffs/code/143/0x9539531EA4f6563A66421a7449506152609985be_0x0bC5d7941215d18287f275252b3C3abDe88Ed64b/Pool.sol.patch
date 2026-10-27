@@ -1,0 +1,367 @@
+===================================================================
+--- src/contracts/protocol/pool/Pool.sol
++++ lib/aave-v3-origin-private/src/contracts/protocol/pool/Pool.sol
+@@ -1,8 +1,9 @@
+ // SPDX-License-Identifier: BUSL-1.1
+ pragma solidity ^0.8.10;
+ 
+ import {Multicall} from "openzeppelin-contracts/contracts/utils/Multicall.sol";
++import {ReentrancyGuardTransient} from "openzeppelin-contracts/contracts/utils/ReentrancyGuardTransient.sol";
+ import {VersionedInitializable} from "../../misc/aave-upgradeability/VersionedInitializable.sol";
+ import {Errors} from "../libraries/helpers/Errors.sol";
+ import {ReserveConfiguration} from "../libraries/configuration/ReserveConfiguration.sol";
+ import {PoolLogic} from "../libraries/logic/PoolLogic.sol";
+@@ -36,8 +37,9 @@
+  *   PoolAddressesProvider
+  */
+ abstract contract Pool is
+     VersionedInitializable,
++    ReentrancyGuardTransient,
+     PoolStorage,
+     IPool,
+     Multicall
+ {
+@@ -50,8 +52,16 @@
+     // @notice The name used to fetch the UMBRELLA contract
+     bytes32 public constant UMBRELLA = "UMBRELLA";
+ 
+     /**
++     * @dev Prevents entering a callback-based action from a guarded Pool action without locking it.
++     */
++    modifier onlyNotReentrant() {
++        require(!_reentrancyGuardEntered(), ReentrancyGuardReentrantCall());
++        _;
++    }
++
++    /**
+      * @dev Only pool configurator can call functions marked by this modifier.
+      */
+     modifier onlyPoolConfigurator() {
+         _onlyPoolConfigurator();
+@@ -138,9 +148,9 @@
+         address asset,
+         uint256 amount,
+         address onBehalfOf,
+         uint16 referralCode
+-    ) public virtual override {
++    ) public virtual override nonReentrant {
+         SupplyLogic.executeSupply(
+             _reserves,
+             _eModeCategories,
+             _usersConfig[onBehalfOf],
+@@ -165,9 +175,9 @@
+         uint256 deadline,
+         uint8 permitV,
+         bytes32 permitR,
+         bytes32 permitS
+-    ) public virtual override {
++    ) public virtual override nonReentrant {
+         try
+             IERC20WithPermit(asset).permit(
+                 _msgSender(),
+                 address(this),
+@@ -198,9 +208,9 @@
+     function withdraw(
+         address asset,
+         uint256 amount,
+         address to
+-    ) public virtual override returns (uint256) {
++    ) public virtual override nonReentrant returns (uint256) {
+         return
+             SupplyLogic.executeWithdraw(
+                 _reserves,
+                 _reservesList,
+@@ -224,9 +234,9 @@
+         uint256 amount,
+         uint256 interestRateMode,
+         uint16 referralCode,
+         address onBehalfOf
+-    ) public virtual override {
++    ) public virtual override nonReentrant {
+         BorrowLogic.executeBorrow(
+             _reserves,
+             _reservesList,
+             _eModeCategories,
+@@ -251,9 +261,9 @@
+         address asset,
+         uint256 amount,
+         uint256 interestRateMode,
+         address onBehalfOf
+-    ) public virtual override returns (uint256) {
++    ) public virtual override nonReentrant returns (uint256) {
+         return
+             BorrowLogic.executeRepay(
+                 _reserves,
+                 _reservesList,
+@@ -284,9 +294,9 @@
+         uint256 deadline,
+         uint8 permitV,
+         bytes32 permitR,
+         bytes32 permitS
+-    ) public virtual override returns (uint256) {
++    ) public virtual override nonReentrant returns (uint256) {
+         try
+             IERC20WithPermit(asset).permit(
+                 _msgSender(),
+                 address(this),
+@@ -328,9 +338,9 @@
+     function repayWithATokens(
+         address asset,
+         uint256 amount,
+         uint256 interestRateMode
+-    ) public virtual override returns (uint256) {
++    ) public virtual override nonReentrant returns (uint256) {
+         return
+             BorrowLogic.executeRepay(
+                 _reserves,
+                 _reservesList,
+@@ -355,9 +365,9 @@
+     /// @inheritdoc IPool
+     function setUserUseReserveAsCollateral(
+         address asset,
+         bool useAsCollateral
+-    ) public virtual override {
++    ) public virtual override nonReentrant {
+         SupplyLogic.executeUseReserveAsCollateral(
+             _reserves,
+             _reservesList,
+             _eModeCategories,
+@@ -376,9 +386,9 @@
+         address debtAsset,
+         address borrower,
+         uint256 debtToCover,
+         bool receiveAToken
+-    ) public virtual override {
++    ) public virtual override nonReentrant {
+         LiquidationLogic.executeLiquidationCall(
+             _reserves,
+             _reservesList,
+             _usersConfig,
+@@ -405,9 +415,9 @@
+         uint256[] calldata interestRateModes,
+         address onBehalfOf,
+         bytes calldata params,
+         uint16 referralCode
+-    ) public virtual override {
++    ) public virtual override onlyNotReentrant {
+         DataTypes.FlashloanParams memory flashParams = DataTypes
+             .FlashloanParams({
+                 user: _msgSender(),
+                 receiverAddress: receiverAddress,
+@@ -441,9 +451,9 @@
+         address asset,
+         uint256 amount,
+         bytes calldata params,
+         uint16 referralCode
+-    ) public virtual override {
++    ) public virtual override onlyNotReentrant {
+         DataTypes.FlashloanSimpleParams memory flashParams = DataTypes
+             .FlashloanSimpleParams({
+                 user: _msgSender(),
+                 receiverAddress: receiverAddress,
+@@ -459,9 +469,9 @@
+ 
+     /// @inheritdoc IPool
+     function mintToTreasury(
+         address[] calldata assets
+-    ) external virtual override {
++    ) external virtual override nonReentrant {
+         PoolLogic.executeMintToTreasury(_reserves, assets);
+     }
+ 
+     /// @inheritdoc IPool
+@@ -658,9 +668,9 @@
+         address from,
+         address to,
+         uint256 scaledAmount,
+         uint256 scaledBalanceFromBefore
+-    ) external virtual override {
++    ) external virtual override nonReentrant {
+         require(
+             _msgSender() == _reserves[asset].aTokenAddress,
+             Errors.CallerNotAToken()
+         );
+@@ -685,9 +695,9 @@
+     function initReserve(
+         address asset,
+         address aTokenAddress,
+         address variableDebtAddress
+-    ) external virtual override onlyPoolConfigurator {
++    ) external virtual override nonReentrant onlyPoolConfigurator {
+         if (
+             PoolLogic.executeInitReserve(
+                 _reserves,
+                 _reservesList,
+@@ -706,16 +716,16 @@
+ 
+     /// @inheritdoc IPool
+     function syncIndexesState(
+         address asset
+-    ) external virtual override onlyPoolConfigurator {
++    ) external virtual override nonReentrant onlyPoolConfigurator {
+         PoolLogic.executeSyncIndexesState(_reserves[asset]);
+     }
+ 
+     /// @inheritdoc IPool
+     function syncRatesState(
+         address asset
+-    ) external virtual override onlyPoolConfigurator {
++    ) external virtual override nonReentrant onlyPoolConfigurator {
+         PoolLogic.executeSyncRatesState(
+             _reserves[asset],
+             asset,
+             RESERVE_INTEREST_RATE_STRATEGY
+@@ -725,9 +735,9 @@
+     /// @inheritdoc IPool
+     function setConfiguration(
+         address asset,
+         DataTypes.ReserveConfigurationMap calldata configuration
+-    ) external virtual override onlyPoolConfigurator {
++    ) external virtual override nonReentrant onlyPoolConfigurator {
+         require(asset != address(0), Errors.ZeroAddressNotValid());
+         require(
+             _reserves[asset].id != 0 || _reservesList[0] == asset,
+             Errors.AssetNotListed()
+@@ -737,17 +747,17 @@
+ 
+     /// @inheritdoc IPool
+     function updateFlashloanPremium(
+         uint128 flashLoanPremium
+-    ) external virtual override onlyPoolConfigurator {
++    ) external virtual override nonReentrant onlyPoolConfigurator {
+         _flashLoanPremium = flashLoanPremium;
+     }
+ 
+     /// @inheritdoc IPool
+     function configureEModeCategory(
+         uint8 id,
+         DataTypes.EModeCategoryBaseConfiguration calldata category
+-    ) external virtual override onlyPoolConfigurator {
++    ) external virtual override nonReentrant onlyPoolConfigurator {
+         // category 0 is reserved for volatile heterogeneous assets and it's always disabled
+         require(id != 0, Errors.EModeCategoryReserved());
+         _eModeCategories[id].ltv = category.ltv;
+         _eModeCategories[id].liquidationThreshold = category
+@@ -760,9 +770,9 @@
+     /// @inheritdoc IPool
+     function configureEModeCategoryCollateralBitmap(
+         uint8 id,
+         uint128 collateralBitmap
+-    ) external virtual override onlyPoolConfigurator {
++    ) external virtual override nonReentrant onlyPoolConfigurator {
+         // category 0 is reserved for volatile heterogeneous assets and it's always disabled
+         require(id != 0, Errors.EModeCategoryReserved());
+         _eModeCategories[id].collateralBitmap = collateralBitmap;
+     }
+@@ -770,9 +780,9 @@
+     /// @inheritdoc IPool
+     function configureEModeCategoryBorrowableBitmap(
+         uint8 id,
+         uint128 borrowableBitmap
+-    ) external virtual override onlyPoolConfigurator {
++    ) external virtual override nonReentrant onlyPoolConfigurator {
+         // category 0 is reserved for volatile heterogeneous assets and it's always disabled
+         require(id != 0, Errors.EModeCategoryReserved());
+         _eModeCategories[id].borrowableBitmap = borrowableBitmap;
+     }
+@@ -780,9 +790,9 @@
+     /// @inheritdoc IPool
+     function configureEModeCategoryLtvzeroBitmap(
+         uint8 id,
+         uint128 ltvzeroBitmap
+-    ) external virtual override onlyPoolConfigurator {
++    ) external virtual override nonReentrant onlyPoolConfigurator {
+         // category 0 is reserved for volatile heterogeneous assets and it's always disabled
+         require(id != 0, Errors.EModeCategoryReserved());
+         _eModeCategories[id].ltvzeroBitmap = ltvzeroBitmap;
+     }
+@@ -790,9 +800,9 @@
+     /// @inheritdoc IPool
+     function configureEModeCategoryIsolated(
+         uint8 id,
+         bool isolated
+-    ) external virtual override onlyPoolConfigurator {
++    ) external virtual override nonReentrant onlyPoolConfigurator {
+         require(id != 0, Errors.EModeCategoryReserved());
+         _eModeCategories[id].isolated = isolated;
+     }
+ 
+@@ -859,9 +869,11 @@
+         return _eModeCategories[id].isolated;
+     }
+ 
+     /// @inheritdoc IPool
+-    function setUserEMode(uint8 categoryId) external virtual override {
++    function setUserEMode(
++        uint8 categoryId
++    ) external virtual override nonReentrant {
+         SupplyLogic.executeSetUserEMode(
+             _reserves,
+             _reservesList,
+             _eModeCategories,
+@@ -890,9 +902,9 @@
+     /// @inheritdoc IPool
+     function setLiquidationGracePeriod(
+         address asset,
+         uint40 until
+-    ) external virtual override onlyPoolConfigurator {
++    ) external virtual override nonReentrant onlyPoolConfigurator {
+         require(
+             _reserves[asset].id != 0 || _reservesList[0] == asset,
+             Errors.AssetNotListed()
+         );
+@@ -903,9 +915,9 @@
+     function rescueTokens(
+         address token,
+         address to,
+         uint256 amount
+-    ) external virtual override onlyPoolAdmin {
++    ) external virtual override onlyNotReentrant onlyPoolAdmin {
+         PoolLogic.executeRescueTokens(token, to, amount);
+     }
+ 
+     /// @inheritdoc IPool
+@@ -914,9 +926,9 @@
+         address asset,
+         uint256 amount,
+         address onBehalfOf,
+         uint16 referralCode
+-    ) external virtual override {
++    ) external virtual override nonReentrant {
+         SupplyLogic.executeSupply(
+             _reserves,
+             _eModeCategories,
+             _usersConfig[onBehalfOf],
+@@ -935,9 +947,9 @@
+     /// @inheritdoc IPool
+     function eliminateReserveDeficit(
+         address asset,
+         uint256 amount
+-    ) external override onlyUmbrella returns (uint256) {
++    ) external override nonReentrant onlyUmbrella returns (uint256) {
+         return
+             LiquidationLogic.executeEliminateDeficit(
+                 _reserves,
+                 _usersConfig[_msgSender()],
+@@ -985,9 +997,9 @@
+     function setUserUseReserveAsCollateralOnBehalfOf(
+         address asset,
+         bool useAsCollateral,
+         address onBehalfOf
+-    ) external override onlyPositionManager(onBehalfOf) {
++    ) external override nonReentrant onlyPositionManager(onBehalfOf) {
+         SupplyLogic.executeUseReserveAsCollateral(
+             _reserves,
+             _reservesList,
+             _eModeCategories,
+@@ -1003,9 +1015,9 @@
+     /// @inheritdoc IPool
+     function setUserEModeOnBehalfOf(
+         uint8 categoryId,
+         address onBehalfOf
+-    ) external override onlyPositionManager(onBehalfOf) {
++    ) external override nonReentrant onlyPositionManager(onBehalfOf) {
+         SupplyLogic.executeSetUserEMode(
+             _reserves,
+             _reservesList,
+             _eModeCategories,

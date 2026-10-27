@@ -1,0 +1,51 @@
+Index: settings
+===================================================================
+--- settings
++++ settings
+@@ -4,9 +4,9 @@
+     "lib/aave-v3-origin-private/src/contracts/protocol/libraries/logic/BorrowLogic.sol": {
+       "BorrowLogic": "0x52Da0ce88202D1542543598D1e1e27F0d344726A"
+     },
+     "lib/aave-v3-origin-private/src/contracts/protocol/libraries/logic/FlashLoanLogic.sol": {
+-      "FlashLoanLogic": "0x6D414cd0d5eAf8C43200ac0c325A7E2Ad83B8be6"
++      "FlashLoanLogic": "0xC27a4d7AC0623B129919786d88714eF16132BEaE"
+     },
+     "lib/aave-v3-origin-private/src/contracts/protocol/libraries/logic/LiquidationLogic.sol": {
+       "LiquidationLogic": "0x96D5686812e33Ab509ECCDb38C89d15607B2a413"
+     },
+@@ -46,13 +46,30 @@
+     "openzeppelin-contracts-upgradeable/=lib/aave-helpers/lib/aave-address-book/lib/aave-v3-origin/lib/solidity-utils/lib/openzeppelin-contracts-upgradeable/",
+     "openzeppelin-contracts/=lib/aave-helpers/lib/aave-address-book/lib/aave-v3-origin/lib/solidity-utils/lib/openzeppelin-contracts-upgradeable/lib/openzeppelin-contracts/",
+     "solidity-utils/=lib/aave-helpers/lib/aave-address-book/lib/aave-v3-origin/lib/solidity-utils/src/",
+     "lib/aave-helpers/:aave-address-book/=lib/aave-helpers/lib/aave-address-book/src/",
++    "lib/aave-helpers/:aave-address-book/=lib/aave-helpers/lib/aave-address-book/src/",
+     "lib/aave-helpers/:solidity-utils/=lib/aave-helpers/lib/aave-address-book/lib/aave-v3-origin/lib/solidity-utils/src/",
+-    "@openzeppelin/contracts-upgradeable/=lib/aave-v3-origin-private/lib/solidity-utils/lib/openzeppelin-contracts-upgradeable/contracts/",
+-    "@openzeppelin/contracts/=lib/aave-v3-origin-private/lib/solidity-utils/lib/openzeppelin-contracts-upgradeable/lib/openzeppelin-contracts/contracts/",
+-    "aave-v3-origin-private/=lib/aave-v3-origin-private/",
++    "lib/aave-helpers/:solidity-utils/=lib/aave-helpers/lib/aave-address-book/lib/aave-v3-origin/lib/solidity-utils/src/",
++    "lib/aave-address-book/lib/aave-v4/:src/=lib/aave-helpers/lib/aave-address-book/lib/aave-v4/src/",
++    "lib/aave-v4/:src/=lib/aave-helpers/lib/aave-address-book/lib/aave-v4/src/",
++    "lib/aave-helpers/lib/aave-address-book/lib/aave-v3-origin/lib/solidity-utils/lib/openzeppelin-contracts-upgradeable/lib/openzeppelin-contracts/lib/forge-std/:ds-test/=lib/aave-helpers/lib/aave-address-book/lib/aave-v3-origin/lib/solidity-utils/lib/openzeppelin-contracts-upgradeable/lib/openzeppelin-contracts/lib/forge-std/lib/ds-test/src/",
++    "lib/aave-helpers/lib/aave-address-book/lib/aave-v3-origin/lib/solidity-utils/lib/openzeppelin-contracts-upgradeable/lib/openzeppelin-contracts/lib/forge-std/:ds-test/=lib/aave-helpers/lib/aave-address-book/lib/aave-v3-origin/lib/solidity-utils/lib/openzeppelin-contracts-upgradeable/lib/openzeppelin-contracts/lib/forge-std/lib/ds-test/src/",
++    "lib/aave-helpers/lib/aave-address-book/lib/aave-v3-origin/lib/solidity-utils/lib/openzeppelin-contracts-upgradeable/lib/forge-std/:ds-test/=lib/aave-helpers/lib/aave-address-book/lib/aave-v3-origin/lib/solidity-utils/lib/openzeppelin-contracts-upgradeable/lib/forge-std/lib/ds-test/src/",
++    "lib/aave-helpers/lib/aave-address-book/lib/aave-v3-origin/lib/solidity-utils/lib/openzeppelin-contracts-upgradeable/lib/forge-std/:ds-test/=lib/aave-helpers/lib/aave-address-book/lib/aave-v3-origin/lib/solidity-utils/lib/openzeppelin-contracts-upgradeable/lib/forge-std/lib/ds-test/src/",
++    "lib/aave-helpers/lib/aave-address-book/lib/aave-v3-origin/lib/solidity-utils/lib/openzeppelin-contracts-upgradeable/lib/openzeppelin-contracts/:halmos-cheatcodes/=lib/aave-helpers/lib/aave-address-book/lib/aave-v3-origin/lib/solidity-utils/lib/openzeppelin-contracts-upgradeable/lib/openzeppelin-contracts/lib/halmos-cheatcodes/src/",
++    "lib/aave-helpers/lib/aave-address-book/lib/aave-v3-origin/lib/solidity-utils/lib/openzeppelin-contracts-upgradeable/lib/openzeppelin-contracts/:halmos-cheatcodes/=lib/aave-helpers/lib/aave-address-book/lib/aave-v3-origin/lib/solidity-utils/lib/openzeppelin-contracts-upgradeable/lib/openzeppelin-contracts/lib/halmos-cheatcodes/src/",
++    "lib/aave-helpers/lib/aave-address-book/lib/aave-v3-origin/lib/solidity-utils/lib/openzeppelin-contracts-upgradeable/:halmos-cheatcodes/=lib/aave-helpers/lib/aave-address-book/lib/aave-v3-origin/lib/solidity-utils/lib/openzeppelin-contracts-upgradeable/lib/halmos-cheatcodes/src/",
++    "lib/aave-helpers/lib/aave-address-book/lib/aave-v3-origin/lib/solidity-utils/lib/openzeppelin-contracts-upgradeable/:halmos-cheatcodes/=lib/aave-helpers/lib/aave-address-book/lib/aave-v3-origin/lib/solidity-utils/lib/openzeppelin-contracts-upgradeable/lib/halmos-cheatcodes/src/",
++    "lib/aave-helpers/lib/aave-address-book/:aave-v4/=lib/aave-helpers/lib/aave-address-book/lib/aave-v4/src/",
++    "lib/aave-helpers/lib/aave-address-book/:aave-v4/=lib/aave-helpers/lib/aave-address-book/lib/aave-v4/src/",
++    "lib/aave-helpers/:aave-v4/=lib/aave-helpers/lib/aave-address-book/lib/aave-v4/src/",
++    "lib/aave-helpers/:aave-v4/=lib/aave-helpers/lib/aave-address-book/lib/aave-v4/src/",
++    "@openzeppelin/contracts-upgradeable/=lib/aave-helpers/lib/aave-address-book/lib/aave-v3-origin/lib/solidity-utils/lib/openzeppelin-contracts-upgradeable/contracts/",
++    "@openzeppelin/contracts/=lib/aave-helpers/lib/aave-address-book/lib/aave-v3-origin/lib/solidity-utils/lib/openzeppelin-contracts-upgradeable/lib/openzeppelin-contracts/contracts/",
++    "aave-v3-origin-private/=lib/aave-v3-origin-private/src/",
++    "aave-v4/=lib/aave-helpers/lib/aave-address-book/lib/aave-v4/",
+     "ds-test/=lib/aave-v3-origin-private/lib/forge-std/lib/ds-test/src/",
+-    "halmos-cheatcodes/=lib/aave-v3-origin-private/lib/solidity-utils/lib/openzeppelin-contracts-upgradeable/lib/halmos-cheatcodes/src/"
++    "halmos-cheatcodes/=lib/aave-helpers/lib/aave-address-book/lib/aave-v3-origin/lib/solidity-utils/lib/openzeppelin-contracts-upgradeable/lib/halmos-cheatcodes/src/"
+   ],
+   "viaIR": false
+ }
+\ No newline at end of file
