@@ -147,7 +147,6 @@ library DeploymentLibrary {
     );
   }
 
-  // Skips libraries already deployed: only FlashLoanLogic differs from the v3.7 deployment.
   function _deployLibraries() internal {
     Create2Utils._create2Deploy(LIBRARIES_SALT, type(BorrowLogic).creationCode);
     Create2Utils._create2Deploy(LIBRARIES_SALT, type(FlashLoanLogic).creationCode);
@@ -168,103 +167,103 @@ library DeploymentLibrary {
   }
 }
 
-contract Deploymainnet is EthereumScript {
+contract DeployMainnet is EthereumScript {
   function run() external broadcast {
     DeploymentLibrary._deployMainnetCore();
   }
 }
 
-contract Deploylido is EthereumScript {
+contract DeployLido is EthereumScript {
   function run() external broadcast {
     DeploymentLibrary._deployMainnetLido();
   }
 }
 
-contract Deployplasma is PlasmaScript {
+contract DeployPlasma is PlasmaScript {
   function run() external broadcast {
     DeploymentLibrary._deployPlasma();
   }
 }
 
-contract Deployavalanche is AvalancheScript {
+contract DeployAvalanche is AvalancheScript {
   function run() external broadcast {
     DeploymentLibrary._deployAvalanche();
   }
 }
 
-contract Deploybnb is BNBScript {
+contract DeployBNB is BNBScript {
   function run() external broadcast {
     DeploymentLibrary._deployBNB();
   }
 }
 
-contract Deploymonad is MonadScript {
+contract DeployMonad is MonadScript {
   function run() external broadcast {
     DeploymentLibrary._deployMonad();
   }
 }
 
-contract Deploypolygon is PolygonScript {
+contract DeployPolygon is PolygonScript {
   function run() external broadcast {
     DeploymentLibrary._deployPolygon();
   }
 }
 
-contract Deploygnosis is GnosisScript {
+contract DeployGnosis is GnosisScript {
   function run() external broadcast {
     DeploymentLibrary._deployGnosis();
   }
 }
 
-contract Deploycelo is CeloScript {
+contract DeployCelo is CeloScript {
   function run() external broadcast {
     DeploymentLibrary._deployCelo();
   }
 }
 
-contract Deploybase is BaseScript {
+contract DeployBase is BaseScript {
   function run() external broadcast {
     DeploymentLibrary._deployBase();
   }
 }
 
-contract Deployarbitrum is ArbitrumScript {
+contract DeployArbitrum is ArbitrumScript {
   function run() external broadcast {
     DeploymentLibrary._deployArbitrum();
   }
 }
 
-contract Deployoptimism is OptimismScript {
+contract DeployOptimism is OptimismScript {
   function run() external broadcast {
     DeploymentLibrary._deployOptimism();
   }
 }
 
-contract Deploymantle is MantleScript {
+contract DeployMantle is MantleScript {
   function run() external broadcast {
     DeploymentLibrary._deployMantle();
   }
 }
 
-contract Deployink is InkScript {
+contract DeployInk is InkScript {
   function run() external broadcast {
     DeploymentLibrary._deployInk();
   }
 }
 
-contract DeployxLayer is XLayerScript {
+contract DeployXLayer is XLayerScript {
   function run() external broadcast {
     DeploymentLibrary._deployXLayer();
   }
 }
 
-contract Deploylinea is LineaScript {
+contract DeployLinea is LineaScript {
   function run() external broadcast {
     DeploymentLibrary._deployLinea();
   }
 }
 
-contract Deploymegaeth is MegaEthScript {
+contract DeployMegaEth is MegaEthScript {
   function run() external broadcast {
     DeploymentLibrary._deployMegaEth();
   }

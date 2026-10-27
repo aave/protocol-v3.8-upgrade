@@ -35,22 +35,22 @@ v3.8 adds a transient reentrancy guard to the `Pool` ([changelog](lib/aave-v3-or
 
 | Market | Chain id | Pool | Deploy |
 | --- | --- | --- | --- |
-| Ethereum Core | 1 | L1 | `make deploy chain=mainnet` |
+| Ethereum Core | 1 | L1 | `make deploy chain=mainnet market=Mainnet` |
 | Ethereum Lido | 1 | L1 | `make deploy-lido` |
-| Plasma | 9745 | L1 | `make deploy chain=plasma` |
-| Avalanche | 43114 | L1 | `make deploy chain=avalanche` |
-| BNB | 56 | L1 | `make deploy chain=bnb` |
-| Monad | 143 | L1 | `make deploy chain=monad` |
-| Polygon | 137 | L1 | `make deploy chain=polygon` |
-| Gnosis | 100 | L1 | `make deploy chain=gnosis` |
-| Celo | 42220 | L1 | `make deploy chain=celo` |
-| Base | 8453 | L2 | `make deploy chain=base` |
-| Arbitrum | 42161 | L2 | `make deploy chain=arbitrum` |
-| Optimism | 10 | L2 | `make deploy chain=optimism` |
-| Mantle | 5000 | L2 | `make deploy chain=mantle` |
-| Ink | 57073 | L2 | `make deploy chain=ink` |
-| X Layer | 196 | L2 | `make deploy chain=xLayer` |
-| Linea | 59144 | L2 | `make deploy chain=linea` |
-| MegaETH | 4326 | L2 | `make deploy chain=megaeth` |
+| Plasma | 9745 | L1 | `make deploy chain=plasma market=Plasma` |
+| Avalanche | 43114 | L1 | `make deploy chain=avalanche market=Avalanche` |
+| BNB | 56 | L1 | `make deploy chain=bnb market=BNB` |
+| Monad | 143 | L1 | `make deploy chain=monad market=Monad` |
+| Polygon | 137 | L1 | `make deploy chain=polygon market=Polygon` |
+| Gnosis | 100 | L1 | `make deploy chain=gnosis market=Gnosis` |
+| Celo | 42220 | L1 | `make deploy chain=celo market=Celo` |
+| Base | 8453 | L2 | `make deploy chain=base market=Base` |
+| Arbitrum | 42161 | L2 | `make deploy chain=arbitrum market=Arbitrum` |
+| Optimism | 10 | L2 | `make deploy chain=optimism market=Optimism` |
+| Mantle | 5000 | L2 | `make deploy chain=mantle market=Mantle` |
+| Ink | 57073 | L2 | `make deploy chain=ink market=Ink` |
+| X Layer | 196 | L2 | `make deploy chain=xLayer market=XLayer` |
+| Linea | 59144 | L2 | `make deploy chain=linea market=Linea` |
+| MegaETH | 4326 | L2 | `make deploy chain=megaeth market=MegaEth` |
 
 Metis is excluded: `TSTORE` reverts on Andromeda. Ethereum EtherFi, Sonic and Scroll are on v3.7 but deprecated, so they are not upgraded. After deploying, set the payload address in `src/Deployments.sol` so the tests run against the deployed payload.
