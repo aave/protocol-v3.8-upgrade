@@ -8,7 +8,7 @@ import {IPoolRevision} from "./interfaces/IPoolRevision.sol";
 /**
  * @title UpgradePayload
  * @notice Upgrade payload to upgrade the Aave v3.7 to v3.8
- * @author BGD Labs
+ * @author Aave Labs
  */
 contract UpgradePayload {
   struct ConstructorParams {
