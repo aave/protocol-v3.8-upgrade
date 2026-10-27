@@ -34,13 +34,8 @@ jobs:
         with:
           ALCHEMY_API_KEY: ${{ secrets.ALCHEMY_API_KEY }}
 
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: npm
-
-      - name: Install node dependencies
-        run: npm ci
+      - name: Setup node
+        uses: aave-dao/github-workflows/.github/actions/setup-node@main
 
       - name: Run Foundry setup
         uses: aave-dao/github-workflows/.github/actions/foundry-setup@main
