@@ -1,7 +1,7 @@
 [submodule "lib/aave-v3-origin-private"]
 	path = lib/aave-v3-origin-private
-	url = https://github.com/bgd-labs/aave-v3-origin-private
-	branch = v3.7
+	url = https://github.com/aave/aave-v3-origin-private
+	branch = feat/pool-reentrancy-guard-and-rounding
 [submodule "lib/aave-helpers"]
 	path = lib/aave-helpers
 	url = https://github.com/aave-dao/aave-helpers

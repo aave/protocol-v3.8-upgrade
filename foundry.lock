@@ -2,13 +2,13 @@
   "lib/aave-helpers": {
     "branch": {
       "name": "main",
-      "rev": "a7799378dde2c630298a177fd9f600b2d34e27fc"
+      "rev": "031d0f50e0cd588e6ad4b11f07e9745407fc346b"
     }
   },
   "lib/aave-v3-origin-private": {
     "branch": {
-      "name": "v3.7",
-      "rev": "dd1077b902ce9b990f671af3f4a4bcbf888eecd3"
+      "name": "feat/pool-reentrancy-guard-and-rounding",
+      "rev": "4e45f0b723346d959d70b4e79f0aa47036afa5c4"
     }
   }
 }

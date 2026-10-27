@@ -11,7 +11,7 @@ evm_version = 'cancun'
 bytecode_hash = 'none'
 libraries = [
     'aave-v3-origin/contracts/protocol/libraries/logic/BorrowLogic.sol:BorrowLogic:0x52Da0ce88202D1542543598D1e1e27F0d344726A',
-    'aave-v3-origin/contracts/protocol/libraries/logic/FlashLoanLogic.sol:FlashLoanLogic:0x6D414cd0d5eAf8C43200ac0c325A7E2Ad83B8be6',
+    'aave-v3-origin/contracts/protocol/libraries/logic/FlashLoanLogic.sol:FlashLoanLogic:0xC27a4d7AC0623B129919786d88714eF16132BEaE',
     'aave-v3-origin/contracts/protocol/libraries/logic/LiquidationLogic.sol:LiquidationLogic:0x96D5686812e33Ab509ECCDb38C89d15607B2a413',
     'aave-v3-origin/contracts/protocol/libraries/logic/PoolLogic.sol:PoolLogic:0xD70593841C57cbaA04957cc3EAcE95708e48853b',
     'aave-v3-origin/contracts/protocol/libraries/logic/SupplyLogic.sol:SupplyLogic:0x584C7d8c4cb05304FE5Ac7fbc97f20A10Fb07564'
@@ -48,7 +48,11 @@ ink = "${RPC_INK}"
 plasma = "${RPC_PLASMA}"
 mantle = "${RPC_MANTLE}"
 megaeth = "${RPC_MEGAETH}"
+monad = "${RPC_MONAD}"
 xLayer="${RPC_XLAYER}"
+
+[lint]
+lint_on_build = false
 
 [fmt]
 tab_width = 2

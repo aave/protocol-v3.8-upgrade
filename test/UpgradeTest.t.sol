@@ -6,24 +6,23 @@ import "forge-std/Test.sol";
 import {
   ProtocolV3TestBase,
   IPool,
-  IPoolDataProvider,
   IPoolAddressesProvider,
   IERC20,
   DataTypes,
   SafeERC20,
   ReserveConfiguration
 } from "aave-helpers/src/ProtocolV3TestBase.sol";
-import {EModeConfiguration} from "aave-v3-origin/contracts/protocol/libraries/configuration/EModeConfiguration.sol";
+import {PercentageMath} from "aave-v3-origin/contracts/protocol/libraries/math/PercentageMath.sol";
+import {ReentrancyGuardTransient} from "openzeppelin-contracts/contracts/utils/ReentrancyGuardTransient.sol";
+import {PoolInstance} from "aave-v3-origin/contracts/instances/PoolInstance.sol";
 import {
-  ReserveConfiguration as ReserveConfiguration36,
-  DataTypes as DataTypes36
-} from "../src/3.6/ReserveConfiguration.sol";
-import {IPool as IPool36} from "../src/3.6/IPool.sol";
-import {IPoolAddressesProvider as IPoolAddressesProvider36} from "../src/3.6/IPoolAddressesProvider.sol";
-import {UpgradePayload} from "../src/UpgradePayload.sol";
+  IPoolAddressesProvider as IPoolAddressesProvider38
+} from "aave-v3-origin/contracts/interfaces/IPoolAddressesProvider.sol";
+import {IReserveInterestRateStrategy} from "aave-v3-origin/contracts/interfaces/IReserveInterestRateStrategy.sol";
+import {UpgradePayload, IPoolRevision} from "../src/UpgradePayload.sol";
 
-interface NewPool {
-  function RESERVE_INTEREST_RATE_STRATEGY() external returns (address);
+interface IIncentivizedToken {
+  function getIncentivesController() external view returns (address);
 }
 
 interface MockExecute {
@@ -50,27 +49,63 @@ contract MockFlashReceiver {
   }
 }
 
+/// @dev Supplies from inside a flashLoanSimple callback, which v3.8 must keep allowing.
+contract SupplyingFlashReceiver {
+  using SafeERC20 for IERC20;
+
+  function executeOperation(
+    address asset,
+    uint256 amount,
+    uint256 premium,
+    address, /* initiator */
+    bytes calldata params
+  )
+    external
+    returns (bool)
+  {
+    uint256 supplyAmount = abi.decode(params, (uint256));
+    IERC20(asset).forceApprove(msg.sender, supplyAmount + amount + premium);
+    IPool(msg.sender).supply(asset, supplyAmount, address(this), 0);
+    return true;
+  }
+}
+
+/// @dev Etched over a rewards controller: re-enters the Pool from the aToken mint hook of a guarded action.
+contract ReentrantRewardsHook {
+  IPool public immutable POOL;
+
+  constructor(IPool pool) {
+    POOL = pool;
+  }
+
+  function handleAction(address, uint256, uint256) external {
+    POOL.setUserEMode(0);
+  }
+}
+
 abstract contract UpgradeTest is ProtocolV3TestBase {
   using SafeERC20 for IERC20;
   using ReserveConfiguration for DataTypes.ReserveConfigurationMap;
-  using ReserveConfiguration36 for DataTypes36.ReserveConfigurationMap;
+  using PercentageMath for uint256;
+
+  bytes32 internal constant ERC1967_IMPLEMENTATION_SLOT =
+    0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc;
 
   string public NETWORK;
   string public NETWORK_SUB_NAME;
   uint256 public immutable BLOCK_NUMBER;
-  address immutable FLASH_RECEIVER;
-
-  IPool public POOL;
-  IPoolAddressesProvider public ADDRESSES_PROVIDER;
+  address FLASH_RECEIVER;
+  // payload `execute()` runs from inside the flashloan callback; zero for the control run
+  address internal _flashPayload;
 
   constructor(string memory network, uint256 blocknumber) {
     NETWORK = network;
     BLOCK_NUMBER = blocknumber;
-    FLASH_RECEIVER = address(new MockFlashReceiver());
   }
 
   function setUp() public virtual {
     vm.createSelectFork(vm.rpcUrl(NETWORK), BLOCK_NUMBER);
+    FLASH_RECEIVER = address(new MockFlashReceiver());
   }
 
   function test_execution() public virtual {
@@ -79,9 +114,10 @@ abstract contract UpgradeTest is ProtocolV3TestBase {
 
   // function to be called from the flashloan
   function execute() external {
-    executePayload(vm, _getTestPayload());
+    if (_flashPayload != address(0)) executePayload(vm, _flashPayload);
   }
 
+  /// forge-config: default.isolate = true
   function test_diff() external virtual {
     UpgradePayload _payload = UpgradePayload(_getTestPayload());
 
@@ -93,97 +129,71 @@ abstract contract UpgradeTest is ProtocolV3TestBase {
     );
   }
 
-  /**
-   * On the upgrade we assume all interest rates are already the same.
-   * This test simply validates that assumption.
-   */
-  function test_assumption_interestRates() external {
-    UpgradePayload _payload = UpgradePayload(_getTestPayload());
-    IPoolAddressesProvider addressesProvider = IPoolAddressesProvider(address(_payload.POOL_ADDRESSES_PROVIDER()));
-    IPool pool = IPool(addressesProvider.getPool());
-    address[] memory reserves = pool.getReservesList();
-    address[] memory irs = new address[](reserves.length);
-    for (uint256 i = 0; i < reserves.length; i++) {
-      DataTypes.ReserveDataLegacy memory reserveData = pool.getReserveData(reserves[i]);
-      irs[i] = reserveData.interestRateStrategyAddress;
-    }
-
-    executePayload(vm, address(_payload));
-
-    address commonIr = NewPool(address(pool)).RESERVE_INTEREST_RATE_STRATEGY();
-    for (uint256 i = 0; i < reserves.length; i++) {
-      assertEq(irs[i], commonIr);
-    }
-  }
-
-  function test_assumption_noSiloed() external {
-    UpgradePayload _payload = UpgradePayload(_getTestPayload());
-
-    IPoolAddressesProvider addressesProvider = IPoolAddressesProvider(address(_payload.POOL_ADDRESSES_PROVIDER()));
-    IPool pool = IPool(addressesProvider.getPool());
-    address[] memory reserves = pool.getReservesList();
-    for (uint256 i = 0; i < reserves.length; i++) {
-      DataTypes36.ReserveDataLegacy memory reserveData = IPool36(address(pool)).getReserveData(reserves[i]);
-      assertEq(reserveData.configuration.getSiloedBorrowing(), false);
-    }
-  }
-
-  function test_assumption_noDebtCeiling() external {
-    UpgradePayload _payload = UpgradePayload(_getTestPayload());
-
-    executePayload(vm, address(_payload));
-
-    IPoolAddressesProvider addressesProvider = IPoolAddressesProvider(address(_payload.POOL_ADDRESSES_PROVIDER()));
-    IPool pool = IPool(addressesProvider.getPool());
-    address[] memory reserves = pool.getReservesList();
-    for (uint256 i = 0; i < reserves.length; i++) {
-      DataTypes36.ReserveDataLegacy memory reserveData = IPool36(address(pool)).getReserveData(reserves[i]);
-      assertEq(reserveData.configuration.getDebtCeiling(), 0);
-    }
-  }
-
-  function test_assumption_noBorrowableInIsolation() external {
-    UpgradePayload _payload = UpgradePayload(_getTestPayload());
-
-    executePayload(vm, address(_payload));
-
-    IPoolAddressesProvider addressesProvider = IPoolAddressesProvider(address(_payload.POOL_ADDRESSES_PROVIDER()));
-    IPool pool = IPool(addressesProvider.getPool());
-    address[] memory reserves = pool.getReservesList();
-    for (uint256 i = 0; i < reserves.length; i++) {
-      DataTypes36.ReserveDataLegacy memory reserveData = IPool36(address(pool)).getReserveData(reserves[i]);
-      assertEq(reserveData.configuration.getBorrowableInIsolation(), false);
-    }
-  }
-
-  function test_assumption_isolatedAssetsAreLtv0() external {
-    UpgradePayload _payload = UpgradePayload(_getTestPayload());
-
-    IPoolAddressesProvider addressesProvider = IPoolAddressesProvider(address(_payload.POOL_ADDRESSES_PROVIDER()));
-    IPool pool = IPool(addressesProvider.getPool());
-    address[] memory reserves = pool.getReservesList();
-    for (uint256 i = 0; i < reserves.length; i++) {
-      DataTypes36.ReserveDataLegacy memory reserveData = IPool36(address(pool)).getReserveData(reserves[i]);
-      if (reserveData.configuration.getDebtCeiling() != 0) {
-        assertEq(reserveData.configuration.getLtv(), 0);
-      }
-    }
-  }
-
-  function test_assumption_noSequencerUptimeSentinel() external {
-    UpgradePayload _payload = UpgradePayload(_getTestPayload());
-
-    executePayload(vm, address(_payload));
-
-    IPoolAddressesProvider36 addressesProvider36 =
-      IPoolAddressesProvider36(address(_payload.POOL_ADDRESSES_PROVIDER()));
-    assertEq(addressesProvider36.getPriceOracleSentinel(), address(0));
-  }
-
   function test_upgrade() public virtual {
     UpgradePayload _payload = UpgradePayload(_getTestPayload());
+    IPool pool = IPool(address(_payload.POOL()));
+    address poolConfigurator = _payload.POOL_ADDRESSES_PROVIDER().getPoolConfigurator();
+
+    address interestRateStrategyBefore = pool.RESERVE_INTEREST_RATE_STRATEGY();
+    address poolConfiguratorImplBefore = _getImplementation(poolConfigurator);
+    assertEq(IPoolRevision(address(pool)).POOL_REVISION(), _payload.PREVIOUS_POOL_REVISION());
 
     executePayload(vm, address(_payload));
+
+    assertEq(_getImplementation(address(pool)), _payload.POOL_IMPL());
+    assertEq(IPoolRevision(address(pool)).POOL_REVISION(), 12);
+    assertEq(pool.RESERVE_INTEREST_RATE_STRATEGY(), interestRateStrategyBefore);
+    assertEq(_getImplementation(poolConfigurator), poolConfiguratorImplBefore);
+  }
+
+  function test_execute_revertsWhenAlreadyUpgraded() external {
+    UpgradePayload _payload = UpgradePayload(_getTestPayload());
+
+    executePayload(vm, address(_payload));
+
+    vm.expectRevert(UpgradePayload.WrongPoolRevision.selector);
+    _payload.execute();
+  }
+
+  function test_constructor_revertsOnInterestRateStrategyMismatch() external {
+    UpgradePayload _payload = UpgradePayload(_getTestPayload());
+    IPoolAddressesProvider38 addressesProvider = _payload.POOL_ADDRESSES_PROVIDER();
+
+    address poolImpl = address(new PoolInstance(addressesProvider, IReserveInterestRateStrategy(address(0xdead))));
+
+    vm.expectRevert(UpgradePayload.WrongInterestRateStrategy.selector);
+    new UpgradePayload(UpgradePayload.ConstructorParams({poolAddressesProvider: addressesProvider, poolImpl: poolImpl}));
+  }
+
+  function test_reentrancy_supplyFromFlashLoanCallback() external {
+    UpgradePayload _payload = UpgradePayload(_getTestPayload());
+    IPool pool = IPool(address(_payload.POOL()));
+    executePayload(vm, address(_payload));
+
+    (address asset, uint256 amount) = _findSuppliableReserve(pool, true);
+    address receiver = address(new SupplyingFlashReceiver());
+    // amount for the supply plus an upper bound for the premium
+    deal(asset, receiver, 2 * amount);
+
+    pool.flashLoanSimple(receiver, asset, amount, abi.encode(amount), 0);
+
+    assertGe(IERC20(pool.getReserveAToken(asset)).balanceOf(receiver), amount - 1);
+  }
+
+  function test_reentrancy_guardedActionReentryReverts() external {
+    UpgradePayload _payload = UpgradePayload(_getTestPayload());
+    IPool pool = IPool(address(_payload.POOL()));
+    executePayload(vm, address(_payload));
+
+    (address asset, uint256 amount) = _findSuppliableReserve(pool, false);
+    address rewardsController = IIncentivizedToken(pool.getReserveAToken(asset)).getIncentivesController();
+    vm.etch(rewardsController, address(new ReentrantRewardsHook(pool)).code);
+
+    deal(asset, address(this), amount);
+    IERC20(asset).forceApprove(address(pool), amount);
+
+    vm.expectRevert(ReentrancyGuardTransient.ReentrancyGuardReentrantCall.selector);
+    pool.supply(asset, amount, address(this), 0);
   }
 
   function test_gas() external {
@@ -191,60 +201,124 @@ abstract contract UpgradeTest is ProtocolV3TestBase {
     vm.snapshotGasLastCall("Execution", string.concat(NETWORK, NETWORK_SUB_NAME));
   }
 
-  function test_flashloan_attack() public {
-    UpgradePayload payloadForFlashloan = UpgradePayload(_getTestPayload());
+  /**
+   * Governance execution is permissionless once queued, so anyone can wrap it in a flashloan.
+   * Executing the upgrade inside the callback must leave every reserve exactly as executing it after the flashloan.
+   */
+  function test_flashloan_upgradeInsideCallback() public {
+    UpgradePayload _payload = UpgradePayload(_getTestPayload());
+    IPool pool = IPool(address(_payload.POOL()));
+    (address[] memory assets, uint256[] memory amounts) = _flashLoanAssets(pool);
 
-    POOL = payloadForFlashloan.POOL();
-    ADDRESSES_PROVIDER = payloadForFlashloan.POOL_ADDRESSES_PROVIDER();
+    uint256 premiumTotal = pool.FLASHLOAN_PREMIUM_TOTAL();
+    // premiums come out of the aToken: `deal` can't fund every asset (FXS via its whale)
+    for (uint256 i = 0; i < assets.length; i++) {
+      vm.prank(pool.getReserveAToken(assets[i]));
+      IERC20(assets[i]).safeTransfer(FLASH_RECEIVER, amounts[i].percentMul(premiumTotal) + 1);
+    }
 
-    address[] memory reserves = POOL.getReservesList();
-    uint256[] memory oldVirtualUnderlyingBalances = new uint256[](reserves.length);
+    uint256 snapshot = vm.snapshotState();
+    _flashLoan(pool, assets, amounts);
+    executePayload(vm, address(_payload));
+    bytes32[] memory expected = _reserveStates(pool);
+    vm.revertToState(snapshot);
 
+    _flashPayload = address(_payload);
+    _flashLoan(pool, assets, amounts);
+
+    assertEq(IPoolRevision(address(pool)).POOL_REVISION(), _payload.NEW_POOL_REVISION());
+    bytes32[] memory actual = _reserveStates(pool);
+    for (uint256 i = 0; i < actual.length; i++) {
+      assertEq(actual[i], expected[i]);
+    }
+  }
+
+  function _flashLoanAssets(IPool pool) internal returns (address[] memory assets, uint256[] memory amounts) {
+    address[] memory reserves = pool.getReservesList();
+    assets = new address[](reserves.length);
+    amounts = new uint256[](reserves.length);
     uint256 length;
-    address[] memory filteredReserves = new address[](reserves.length);
-    uint256[] memory amounts = new uint256[](reserves.length);
-    uint256[] memory interestRateModes = new uint256[](reserves.length);
     for (uint256 i = 0; i < reserves.length; i++) {
-      oldVirtualUnderlyingBalances[i] = POOL.getVirtualUnderlyingBalance(reserves[i]);
-      console.log(oldVirtualUnderlyingBalances[i]);
-
-      DataTypes.ReserveConfigurationMap memory configuration = POOL.getConfiguration(reserves[i]);
-
-      if (configuration.getPaused() || !configuration.getActive() || !configuration.getFlashLoanEnabled()) {
+      DataTypes.ReserveConfigurationMap memory configuration = pool.getConfiguration(reserves[i]);
+      if (
+        configuration.getPaused() || !configuration.getActive() || !configuration.getFlashLoanEnabled()
+          || _isExcludedFromFlashLoan(reserves[i])
+      ) {
         continue;
       }
-
-      filteredReserves[length] = reserves[i];
-      // The amount flashed does not really matter.
-      // We're limiting it in the test because we know that the vBalanceDelta can sometimes be slightly negative,
-      // and for some assets, `deal` does not work. Therefore, we fall back to user transfers, which for most assets,
-      // do not provide enough funds to 'deal' the entire available VirtualUnderlyingBalance.
-      amounts[length] = oldVirtualUnderlyingBalances[i] / 2;
-      interestRateModes[length] = 0;
-
+      // half the virtual balance: the exact amount doesn't matter, it only has to be non-zero
+      uint256 amount = pool.getVirtualUnderlyingBalance(reserves[i]) / 2;
+      if (amount == 0) continue;
+      assets[length] = reserves[i];
+      amounts[length] = amount;
       ++length;
     }
     assembly {
-      mstore(filteredReserves, length)
+      mstore(assets, length)
       mstore(amounts, length)
-      mstore(interestRateModes, length)
     }
+  }
 
-    // Using bytes("") to expect a revert without a reason string (an "empty" error, like EvmError: Revert).
-    vm.expectRevert(bytes(""));
-    POOL.flashLoan({
+  function _flashLoan(IPool pool, address[] memory assets, uint256[] memory amounts) internal {
+    pool.flashLoan({
       receiverAddress: FLASH_RECEIVER,
-      assets: filteredReserves,
+      assets: assets,
       amounts: amounts,
-      interestRateModes: interestRateModes,
+      interestRateModes: new uint256[](assets.length),
       onBehalfOf: address(this),
       params: "",
       referralCode: 0
     });
+  }
 
+  function _reserveStates(IPool pool) internal view returns (bytes32[] memory states) {
+    address[] memory reserves = pool.getReservesList();
+    states = new bytes32[](reserves.length);
     for (uint256 i = 0; i < reserves.length; i++) {
-      assertEq(POOL.getVirtualUnderlyingBalance(reserves[i]), oldVirtualUnderlyingBalances[i]);
+      states[i] = keccak256(abi.encode(pool.getReserveData(reserves[i]), pool.getVirtualUnderlyingBalance(reserves[i])));
     }
+  }
+
+  /// @dev Assets whose transfers revert at the fork block, which would fail the flashloan before its callback.
+  function _isExcludedFromFlashLoan(address) internal view virtual returns (bool) {
+    return false;
+  }
+
+  /// @dev External so `_findSuppliableReserve` can try it and roll back: `deal` and supply both fail on some assets.
+  function supplyProbe(IPool pool, address asset, uint256 amount) external {
+    deal(asset, address(this), amount);
+    IERC20(asset).forceApprove(address(pool), amount);
+    pool.supply(asset, amount, address(this), 0);
+  }
+
+  function _findSuppliableReserve(IPool pool, bool flashLoanable) internal returns (address, uint256) {
+    address[] memory reserves = pool.getReservesList();
+    for (uint256 i = 0; i < reserves.length; i++) {
+      DataTypes.ReserveConfigurationMap memory configuration = pool.getConfiguration(reserves[i]);
+      if (
+        !configuration.getActive() || configuration.getPaused() || configuration.getFrozen()
+          || (flashLoanable && !configuration.getFlashLoanEnabled())
+      ) {
+        continue;
+      }
+      if (IIncentivizedToken(pool.getReserveAToken(reserves[i])).getIncentivesController() == address(0)) continue;
+
+      uint256 amount = 10 ** configuration.getDecimals();
+      if (flashLoanable && pool.getVirtualUnderlyingBalance(reserves[i]) < amount) continue;
+
+      uint256 snapshot = vm.snapshotState();
+      bool ok;
+      try this.supplyProbe(pool, reserves[i], amount) {
+        ok = true;
+      } catch {}
+      vm.revertToState(snapshot);
+      if (ok) return (reserves[i], amount);
+    }
+    revert("NO_SUPPLIABLE_RESERVE");
+  }
+
+  function _getImplementation(address proxy) internal view returns (address) {
+    return address(uint160(uint256(vm.load(proxy, ERC1967_IMPLEMENTATION_SLOT))));
   }
 
   function _getTestPayload() internal returns (address) {

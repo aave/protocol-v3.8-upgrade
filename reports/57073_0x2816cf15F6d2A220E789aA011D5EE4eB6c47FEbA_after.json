@@ -5,9 +5,9 @@
       "aToken": "0x99cBF1Ff4527675Ed3301671105C9F7748fb8a04",
       "aTokenName": "Aave InkWhitelabel USDT",
       "aTokenSymbol": "aInkWlUSDT",
-      "aTokenUnderlyingBalance": "67648280324986",
-      "borrowCap": 340000000,
-      "borrowingEnabled": true,
+      "aTokenUnderlyingBalance": "1290662922884",
+      "borrowCap": 45000000,
+      "borrowingEnabled": false,
       "decimals": 6,
       "id": 2,
       "interestRateStrategy": "0xCFDAdA7DCd2e785cF706BaDBC2B8Af5084d595e9",
@@ -18,26 +18,26 @@
       "liquidationBonus": 10450,
       "liquidationProtocolFee": 1000,
       "liquidationThreshold": 7800,
-      "ltv": 7500,
-      "oracle": "0x24FdD142b34C6B5D55299709DB0966681933c9aF",
+      "ltv": 0,
+      "oracle": "0x00F5c1A7470b0aF87ca03F9633E5b54b20B9e244",
       "oracleDecimals": 8,
       "oracleDescription": "Capped USDT/USD",
-      "oracleLatestAnswer": "99903500",
+      "oracleLatestAnswer": "99836000",
       "reserveFactor": 1000,
-      "supplyCap": 375000000,
+      "supplyCap": 50000000,
       "symbol": "USD₮0",
       "underlying": "0x0200C29006150606B650577BBE7B6248F58470c1",
       "usageAsCollateralEnabled": true,
       "variableDebtToken": "0xA5d61eF3D06234371507e54FB709F401E590719a",
       "variableDebtTokenName": "Aave InkWhitelabel Variable Debt USDT",
       "variableDebtTokenSymbol": "variableDebtInkWlUSDT",
-      "virtualBalance": "67648280324986"
+      "virtualBalance": "1290662922884"
     },
     "0x211Cc4DD073734dA055fbF44a2b4667d5E5fE5d2": {
       "aToken": "0x24C1FaC3447C45137E5f1c2C54Fe9ed3F1EdeA61",
       "aTokenName": "Aave InkWhitelabel sUSDe",
       "aTokenSymbol": "aInkWlsUSDe",
-      "aTokenUnderlyingBalance": "37399930024060088276885970",
+      "aTokenUnderlyingBalance": "1900610853686262301505",
       "borrowCap": 1,
       "borrowingEnabled": false,
       "decimals": 18,
@@ -51,25 +51,25 @@
       "liquidationProtocolFee": 1000,
       "liquidationThreshold": 0,
       "ltv": 0,
-      "oracle": "0xC170637d22Ac02bAC99ED794038d2676d712e704",
+      "oracle": "0xDef9E73435806aF8f90b78179bb1Cb07A670C58D",
       "oracleDecimals": 8,
       "oracleDescription": "Capped sUSDe / USDT / USD",
-      "oracleLatestAnswer": "122438796",
+      "oracleLatestAnswer": "125294172",
       "reserveFactor": 5000,
-      "supplyCap": 100000000,
+      "supplyCap": 10000000,
       "symbol": "sUSDe",
       "underlying": "0x211Cc4DD073734dA055fbF44a2b4667d5E5fE5d2",
       "usageAsCollateralEnabled": false,
       "variableDebtToken": "0xD02245a1CD906AD9336600E037345a4C5242B141",
       "variableDebtTokenName": "Aave InkWhitelabel Variable Debt sUSDe",
       "variableDebtTokenSymbol": "variableDebtInkWlsUSDe",
-      "virtualBalance": "37399930024060088276885970"
+      "virtualBalance": "1900610853686262301505"
     },
     "0x2416092f143378750bb29b79eD961ab195CcEea5": {
       "aToken": "0xd596B3C15E28795AaBF0481DaA0Ff4eBAa42c5F2",
       "aTokenName": "Aave InkWhitelabel ezETH",
       "aTokenSymbol": "aInkWlezETH",
-      "aTokenUnderlyingBalance": "25747943096534644462298",
+      "aTokenUnderlyingBalance": "45673913296225451",
       "borrowCap": 1,
       "borrowingEnabled": false,
       "decimals": 18,
@@ -82,27 +82,27 @@
       "liquidationBonus": 11000,
       "liquidationProtocolFee": 1000,
       "liquidationThreshold": 10,
-      "ltv": 5,
-      "oracle": "0x51e5242698Cf425A558BCe440357Fd20f00D9671",
+      "ltv": 0,
+      "oracle": "0x6AC731aDA855ecaa8492526d4D7f03F9140dd1f0",
       "oracleDecimals": 8,
       "oracleDescription": "Capped ezETH / ETH / USD",
-      "oracleLatestAnswer": "220785382105",
+      "oracleLatestAnswer": "252395707985",
       "reserveFactor": 1000,
-      "supplyCap": 36000,
+      "supplyCap": 1,
       "symbol": "ezETH",
       "underlying": "0x2416092f143378750bb29b79eD961ab195CcEea5",
       "usageAsCollateralEnabled": true,
       "variableDebtToken": "0x522e93245C2df28904B86103af69bC27ae80FA46",
       "variableDebtTokenName": "Aave InkWhitelabel Variable Debt ezETH",
       "variableDebtTokenSymbol": "variableDebtInkWlezETH",
-      "virtualBalance": "25747943096534644462298"
+      "virtualBalance": "45673913296225451"
     },
     "0x2D270e6886d130D724215A266106e6832161EAEd": {
       "aToken": "0x70A38B0c90441e991346B7A0Cd98C8528dD1c234",
       "aTokenName": "Aave InkWhitelabel USDC",
       "aTokenSymbol": "aInkWlUSDC",
-      "aTokenUnderlyingBalance": "19859901854844",
-      "borrowCap": 225000000,
+      "aTokenUnderlyingBalance": "19539174421347",
+      "borrowCap": 75000000,
       "borrowingEnabled": true,
       "decimals": 6,
       "id": 5,
@@ -115,27 +115,27 @@
       "liquidationProtocolFee": 0,
       "liquidationThreshold": 0,
       "ltv": 0,
-      "oracle": "0xd910061259A256B99654Cff414c3bfD503E7F6ea",
+      "oracle": "0x89991637dbaCd0999dE1bc8e86330302EAd2CD89",
       "oracleDecimals": 8,
-      "oracleDescription": "Capped USDC/USD",
-      "oracleLatestAnswer": "99958446",
+      "oracleDescription": "USDC / USD",
+      "oracleLatestAnswer": "99968508",
       "reserveFactor": 1000,
-      "supplyCap": 250000000,
+      "supplyCap": 100000000,
       "symbol": "USDC",
       "underlying": "0x2D270e6886d130D724215A266106e6832161EAEd",
       "usageAsCollateralEnabled": false,
       "variableDebtToken": "0x305c03f74DBb8C6052b7667AaBEE21dC7c1f0B29",
       "variableDebtTokenName": "Aave InkWhitelabel Variable Debt USDC",
       "variableDebtTokenSymbol": "variableDebtInkWlUSDC",
-      "virtualBalance": "19859901854844"
+      "virtualBalance": "19539074409748"
     },
     "0x4200000000000000000000000000000000000006": {
       "aToken": "0x2B35eF056728BaFFaC103e3b81cB029788006EF9",
       "aTokenName": "Aave InkWhitelabel WETH",
       "aTokenSymbol": "aInkWlWETH",
-      "aTokenUnderlyingBalance": "9862505469470813636626",
-      "borrowCap": 70000,
-      "borrowingEnabled": true,
+      "aTokenUnderlyingBalance": "4847501303431919987684",
+      "borrowCap": 8200,
+      "borrowingEnabled": false,
       "decimals": 18,
       "id": 0,
       "interestRateStrategy": "0xCFDAdA7DCd2e785cF706BaDBC2B8Af5084d595e9",
@@ -146,28 +146,28 @@
       "liquidationBonus": 10750,
       "liquidationProtocolFee": 1000,
       "liquidationThreshold": 8300,
-      "ltv": 8000,
-      "oracle": "0x163131609562E578754aF12E998635BfCa56712C",
+      "ltv": 0,
+      "oracle": "0xcc2cBeC935a472B01c9d791c22056C2D6E7E86ef",
       "oracleDecimals": 8,
       "oracleDescription": "ETH / USD",
-      "oracleLatestAnswer": "205332163067",
+      "oracleLatestAnswer": "231853000000",
       "reserveFactor": 1500,
-      "supplyCap": 80000,
+      "supplyCap": 13500,
       "symbol": "WETH",
       "underlying": "0x4200000000000000000000000000000000000006",
       "usageAsCollateralEnabled": true,
       "variableDebtToken": "0xc1457AcfBaD2332b07B7651A4Da3176E8F3Bc9E4",
       "variableDebtTokenName": "Aave InkWhitelabel Variable Debt WETH",
       "variableDebtTokenSymbol": "variableDebtInkWlWETH",
-      "virtualBalance": "9862505469470813636626"
+      "virtualBalance": "4847501303431919987684"
     },
     "0x5d3a1Ff2b6BAb83b63cd9AD0787074081a52ef34": {
       "aToken": "0x726D965F0D759A0489d178365f00b4c3c3207BB7",
       "aTokenName": "Aave InkWhitelabel USDe",
       "aTokenSymbol": "aInkWlUSDe",
-      "aTokenUnderlyingBalance": "9959713942086588316494900",
-      "borrowCap": 45000000,
-      "borrowingEnabled": true,
+      "aTokenUnderlyingBalance": "18078108749458016",
+      "borrowCap": 1000000,
+      "borrowingEnabled": false,
       "decimals": 18,
       "id": 10,
       "interestRateStrategy": "0xCFDAdA7DCd2e785cF706BaDBC2B8Af5084d595e9",
@@ -179,27 +179,27 @@
       "liquidationProtocolFee": 1000,
       "liquidationThreshold": 0,
       "ltv": 0,
-      "oracle": "0x24FdD142b34C6B5D55299709DB0966681933c9aF",
+      "oracle": "0x00F5c1A7470b0aF87ca03F9633E5b54b20B9e244",
       "oracleDecimals": 8,
       "oracleDescription": "Capped USDT/USD",
-      "oracleLatestAnswer": "99903500",
+      "oracleLatestAnswer": "99836000",
       "reserveFactor": 2500,
-      "supplyCap": 50000000,
+      "supplyCap": 5000000,
       "symbol": "USDe",
       "underlying": "0x5d3a1Ff2b6BAb83b63cd9AD0787074081a52ef34",
       "usageAsCollateralEnabled": false,
       "variableDebtToken": "0x52D5096a7df365C3870A7767a5024D59eD44d814",
       "variableDebtTokenName": "Aave InkWhitelabel Variable Debt USDe",
       "variableDebtTokenSymbol": "variableDebtInkWlUSDe",
-      "virtualBalance": "9959713942086588316494900"
+      "virtualBalance": "18078108749458016"
     },
     "0x73E0C0d45E048D25Fc26Fa3159b0aA04BfA4Db98": {
       "aToken": "0xC712C3a5624de08EA593FB23270804B47942564e",
       "aTokenName": "Aave InkWhitelabel KBTC",
       "aTokenSymbol": "aInkWlKBTC",
-      "aTokenUnderlyingBalance": "207694506128",
-      "borrowCap": 200,
-      "borrowingEnabled": true,
+      "aTokenUnderlyingBalance": "107592245287",
+      "borrowCap": 1,
+      "borrowingEnabled": false,
       "decimals": 8,
       "id": 1,
       "interestRateStrategy": "0xCFDAdA7DCd2e785cF706BaDBC2B8Af5084d595e9",
@@ -207,29 +207,61 @@
       "isFlashloanable": true,
       "isFrozen": false,
       "isPaused": false,
-      "liquidationBonus": 10750,
+      "liquidationBonus": 10500,
       "liquidationProtocolFee": 1000,
-      "liquidationThreshold": 7700,
-      "ltv": 7200,
-      "oracle": "0xAe48F22903d43f13f66Cc650F57Bd4654ac222cb",
+      "liquidationThreshold": 8700,
+      "ltv": 8500,
+      "oracle": "0xCD4D9b45bEe25e429Ed010DfA8397E221f2D7Fce",
       "oracleDecimals": 8,
       "oracleDescription": "BTC / USD",
-      "oracleLatestAnswer": "6734724500000",
+      "oracleLatestAnswer": "7997996040874",
       "reserveFactor": 5000,
-      "supplyCap": 2750,
+      "supplyCap": 1575,
       "symbol": "kBTC",
       "underlying": "0x73E0C0d45E048D25Fc26Fa3159b0aA04BfA4Db98",
       "usageAsCollateralEnabled": true,
       "variableDebtToken": "0x47D9b89775958F0b5c7734C5570565Ce575e7e94",
       "variableDebtTokenName": "Aave InkWhitelabel Variable Debt KBTC",
       "variableDebtTokenSymbol": "variableDebtInkWlKBTC",
-      "virtualBalance": "207694506128"
+      "virtualBalance": "107592245287"
+    },
+    "0x8A76fe7fA6da27f85a626c5C53730B38D13603d7": {
+      "aToken": "0x9d97196e7e6652e82C2F0FE93a9B3876E3d8528e",
+      "aTokenName": "Aave InkWhitelabel syrupUSDT",
+      "aTokenSymbol": "aInkWlsyrupUSDT",
+      "aTokenUnderlyingBalance": "4743190807301",
+      "borrowCap": 1,
+      "borrowingEnabled": false,
+      "decimals": 6,
+      "id": 12,
+      "interestRateStrategy": "0xCFDAdA7DCd2e785cF706BaDBC2B8Af5084d595e9",
+      "isActive": true,
+      "isFlashloanable": true,
+      "isFrozen": false,
+      "isPaused": false,
+      "liquidationBonus": 0,
+      "liquidationProtocolFee": 1000,
+      "liquidationThreshold": 0,
+      "ltv": 0,
+      "oracle": "0xafE9bbd9F16Db469536D09Dd6678C10514134cB7",
+      "oracleDecimals": 8,
+      "oracleDescription": "Capped SyrupUSDT / USDT / USD",
+      "oracleLatestAnswer": "114797991",
+      "reserveFactor": 4500,
+      "supplyCap": 4750000,
+      "symbol": "syrupUSDT",
+      "underlying": "0x8A76fe7fA6da27f85a626c5C53730B38D13603d7",
+      "usageAsCollateralEnabled": false,
+      "variableDebtToken": "0x58514b6c52a3515cCBBF459BFdb4fC2Aba8462b2",
+      "variableDebtTokenName": "Aave InkWhitelabel Variable Debt syrupUSDT",
+      "variableDebtTokenSymbol": "variableDebtInkWlsyrupUSDT",
+      "virtualBalance": "4743190807301"
     },
     "0x9f0a74A92287E323Eb95c1cd9eCdBEb0e397cAe4": {
       "aToken": "0x98F6A9b82799813447E6c00E51aF5b325976199A",
       "aTokenName": "Aave InkWhitelabel wrsETH",
       "aTokenSymbol": "aInkWlwrsETH",
-      "aTokenUnderlyingBalance": "9404581786446756183511",
+      "aTokenUnderlyingBalance": "30286154598299481",
       "borrowCap": 1,
       "borrowingEnabled": false,
       "decimals": 18,
@@ -237,31 +269,31 @@
       "interestRateStrategy": "0xCFDAdA7DCd2e785cF706BaDBC2B8Af5084d595e9",
       "isActive": true,
       "isFlashloanable": true,
-      "isFrozen": false,
+      "isFrozen": true,
       "isPaused": false,
       "liquidationBonus": 11000,
       "liquidationProtocolFee": 1000,
       "liquidationThreshold": 10,
-      "ltv": 5,
-      "oracle": "0x771a1668f973f2485D32580aB53F5C4934e81531",
+      "ltv": 0,
+      "oracle": "0x3F727547A7F6af12156573253D91e44aC64845a3",
       "oracleDecimals": 8,
       "oracleDescription": "Capped wrsETH / ETH / USD",
-      "oracleLatestAnswer": "219376466793",
+      "oracleLatestAnswer": "251081061642",
       "reserveFactor": 1000,
-      "supplyCap": 18000,
+      "supplyCap": 1,
       "symbol": "wrsETH",
       "underlying": "0x9f0a74A92287E323Eb95c1cd9eCdBEb0e397cAe4",
       "usageAsCollateralEnabled": true,
       "variableDebtToken": "0x33d3F390F266A21b0467efD559DC5fecD17Db52C",
       "variableDebtTokenName": "Aave InkWhitelabel Variable Debt wrsETH",
       "variableDebtTokenSymbol": "variableDebtInkWlwrsETH",
-      "virtualBalance": "9404581786446756183511"
+      "virtualBalance": "30286154598299481"
     },
     "0xA3D68b74bF0528fdD07263c60d6488749044914b": {
       "aToken": "0x7789888E302Bc3288A78a182efe6DfE91da756ec",
       "aTokenName": "Aave InkWhitelabel weETH",
       "aTokenSymbol": "aInkWlweETH",
-      "aTokenUnderlyingBalance": "16444161082169124987",
+      "aTokenUnderlyingBalance": "1246797199702660136",
       "borrowCap": 1,
       "borrowingEnabled": false,
       "decimals": 18,
@@ -274,26 +306,58 @@
       "liquidationBonus": 11000,
       "liquidationProtocolFee": 1000,
       "liquidationThreshold": 10,
-      "ltv": 5,
-      "oracle": "0x68B7Ed7Df658Ed065BcaA415f0Ce0b057Dfcf318",
+      "ltv": 0,
+      "oracle": "0xE477d41e4ABA3821F2dDDb00A5a5D7B3Ce96dAd7",
       "oracleDecimals": 8,
       "oracleDescription": "Capped weETH / eETH(ETH) / USD",
-      "oracleLatestAnswer": "224126433604",
+      "oracleLatestAnswer": "256562946866",
       "reserveFactor": 1000,
-      "supplyCap": 6000,
+      "supplyCap": 300,
       "symbol": "weETH",
       "underlying": "0xA3D68b74bF0528fdD07263c60d6488749044914b",
       "usageAsCollateralEnabled": true,
       "variableDebtToken": "0xF498bfc4439e91042EeDB9736767F770F48Da474",
       "variableDebtTokenName": "Aave InkWhitelabel Variable Debt weETH",
       "variableDebtTokenSymbol": "variableDebtInkWlweETH",
-      "virtualBalance": "16444161082169124987"
+      "virtualBalance": "1246797199702660136"
+    },
+    "0xAd09Cd20e513E4d8cB78036F77Ab9AfdE8555929": {
+      "aToken": "0x49411839511dcB473e9eCd5471B7add47EA1082e",
+      "aTokenName": "Aave InkWhitelabel kHYPE",
+      "aTokenSymbol": "aInkWlkHYPE",
+      "aTokenUnderlyingBalance": "1780875350986084845911",
+      "borrowCap": 1,
+      "borrowingEnabled": false,
+      "decimals": 18,
+      "id": 13,
+      "interestRateStrategy": "0xCFDAdA7DCd2e785cF706BaDBC2B8Af5084d595e9",
+      "isActive": true,
+      "isFlashloanable": true,
+      "isFrozen": false,
+      "isPaused": false,
+      "liquidationBonus": 0,
+      "liquidationProtocolFee": 1000,
+      "liquidationThreshold": 0,
+      "ltv": 0,
+      "oracle": "0xB42BA1d34BbF88731aA456Ec87D039b54B818972",
+      "oracleDecimals": 8,
+      "oracleDescription": "HYPE / USD",
+      "oracleLatestAnswer": "7886468000",
+      "reserveFactor": 5000,
+      "supplyCap": 124000,
+      "symbol": "kHYPE",
+      "underlying": "0xAd09Cd20e513E4d8cB78036F77Ab9AfdE8555929",
+      "usageAsCollateralEnabled": false,
+      "variableDebtToken": "0x335c7Ea0b40b14E6dD31fb52532D2db70cf77878",
+      "variableDebtTokenName": "Aave InkWhitelabel Variable Debt kHYPE",
+      "variableDebtTokenSymbol": "variableDebtInkWlkHYPE",
+      "virtualBalance": "1780875350986084845911"
     },
     "0xaE4EFbc7736f963982aACb17EFA37fCBAb924cB3": {
       "aToken": "0x0373715A7e8f77354B4Af002C6f9F33C79f4F92a",
       "aTokenName": "Aave InkWhitelabel SolvBTC",
       "aTokenSymbol": "aInkWlSolvBTC",
-      "aTokenUnderlyingBalance": "49999999086835244747",
+      "aTokenUnderlyingBalance": "76497453506736264085",
       "borrowCap": 1,
       "borrowingEnabled": false,
       "decimals": 18,
@@ -306,28 +370,28 @@
       "liquidationBonus": 10750,
       "liquidationProtocolFee": 1000,
       "liquidationThreshold": 7500,
-      "ltv": 7000,
-      "oracle": "0xAe48F22903d43f13f66Cc650F57Bd4654ac222cb",
+      "ltv": 0,
+      "oracle": "0xCD4D9b45bEe25e429Ed010DfA8397E221f2D7Fce",
       "oracleDecimals": 8,
       "oracleDescription": "BTC / USD",
-      "oracleLatestAnswer": "6734724500000",
+      "oracleLatestAnswer": "7997996040874",
       "reserveFactor": 5000,
-      "supplyCap": 50,
+      "supplyCap": 135,
       "symbol": "SolvBTC",
       "underlying": "0xaE4EFbc7736f963982aACb17EFA37fCBAb924cB3",
       "usageAsCollateralEnabled": true,
       "variableDebtToken": "0x986d7beE5Cc6eF52607eaD71fDD9B61Aa153271b",
       "variableDebtTokenName": "Aave InkWhitelabel Variable Debt SolvBTC",
       "variableDebtTokenSymbol": "variableDebtInkWlSolvBTC",
-      "virtualBalance": "49999999086835244747"
+      "virtualBalance": "76497453506736264085"
     },
     "0xe343167631d89B6Ffc58B88d6b7fB0228795491D": {
       "aToken": "0x4cd13ce4edbB5523fd4849252b5f1bF215129D10",
       "aTokenName": "Aave InkWhitelabel USDG",
       "aTokenSymbol": "aInkWlUSDG",
-      "aTokenUnderlyingBalance": "6292299064735",
+      "aTokenUnderlyingBalance": "996341066637",
       "borrowCap": 40000000,
-      "borrowingEnabled": true,
+      "borrowingEnabled": false,
       "decimals": 6,
       "id": 3,
       "interestRateStrategy": "0xCFDAdA7DCd2e785cF706BaDBC2B8Af5084d595e9",
@@ -339,10 +403,10 @@
       "liquidationProtocolFee": 0,
       "liquidationThreshold": 0,
       "ltv": 0,
-      "oracle": "0x38758C93672A9F3F4297016BE4Ac1aCA70DcE82A",
+      "oracle": "0x32b1f1A1D3423dE69cf1f75092eCfDc5090d6624",
       "oracleDecimals": 8,
-      "oracleDescription": "Fixed USDG/USD",
-      "oracleLatestAnswer": "100000000",
+      "oracleDescription": "Capped USDG/USD",
+      "oracleLatestAnswer": "99990000",
       "reserveFactor": 1000,
       "supplyCap": 50000000,
       "symbol": "USDG",
@@ -351,15 +415,15 @@
       "variableDebtToken": "0x08443163427BaE789774f45198315f6EAefe566C",
       "variableDebtTokenName": "Aave InkWhitelabel Variable Debt USDG",
       "variableDebtTokenSymbol": "variableDebtInkWlUSDG",
-      "virtualBalance": "6292299064735"
+      "virtualBalance": "996341066637"
     },
     "0xfc421aD3C883Bf9E7C4f42dE845C4e4405799e73": {
       "aToken": "0xC629140A8aA21F8f319A21F41b2DC1b0431693C1",
       "aTokenName": "Aave InkWhitelabel GHO",
       "aTokenSymbol": "aInkWlGHO",
-      "aTokenUnderlyingBalance": "3566071411148568353809625",
-      "borrowCap": 36000000,
-      "borrowingEnabled": true,
+      "aTokenUnderlyingBalance": "212328798244445789290998",
+      "borrowCap": 20000000,
+      "borrowingEnabled": false,
       "decimals": 18,
       "id": 4,
       "interestRateStrategy": "0xCFDAdA7DCd2e785cF706BaDBC2B8Af5084d595e9",
@@ -382,7 +446,7 @@
       "variableDebtToken": "0x45b30e3F687EEC15702dff29069f24173cB69Af4",
       "variableDebtTokenName": "Aave InkWhitelabel Variable Debt GHO",
       "variableDebtTokenSymbol": "variableDebtInkWlGHO",
-      "virtualBalance": "3566071411148568353809625"
+      "virtualBalance": "212328798244445789290998"
     }
   },
   "strategies": {
@@ -412,19 +476,19 @@
     },
     "0x2D270e6886d130D724215A266106e6832161EAEd": {
       "address": "0xCFDAdA7DCd2e785cF706BaDBC2B8Af5084d595e9",
-      "baseVariableBorrowRate": "0",
-      "maxVariableBorrowRate": "140000000000000000000000000",
-      "optimalUsageRatio": "900000000000000000000000000",
-      "variableRateSlope1": "40000000000000000000000000",
-      "variableRateSlope2": "100000000000000000000000000"
+      "baseVariableBorrowRate": "63000000000000000000000000",
+      "maxVariableBorrowRate": "63000000000000000000000000",
+      "optimalUsageRatio": "950000000000000000000000000",
+      "variableRateSlope1": "0",
+      "variableRateSlope2": "0"
     },
     "0x4200000000000000000000000000000000000006": {
       "address": "0xCFDAdA7DCd2e785cF706BaDBC2B8Af5084d595e9",
-      "baseVariableBorrowRate": "0",
-      "maxVariableBorrowRate": "85000000000000000000000000",
+      "baseVariableBorrowRate": "20000000000000000000000000",
+      "maxVariableBorrowRate": "40000000000000000000000000",
       "optimalUsageRatio": "900000000000000000000000000",
-      "variableRateSlope1": "25000000000000000000000000",
-      "variableRateSlope2": "60000000000000000000000000"
+      "variableRateSlope1": "10000000000000000000000000",
+      "variableRateSlope2": "10000000000000000000000000"
     },
     "0x5d3a1Ff2b6BAb83b63cd9AD0787074081a52ef34": {
       "address": "0xCFDAdA7DCd2e785cF706BaDBC2B8Af5084d595e9",
@@ -436,11 +500,19 @@
     },
     "0x73E0C0d45E048D25Fc26Fa3159b0aA04BfA4Db98": {
       "address": "0xCFDAdA7DCd2e785cF706BaDBC2B8Af5084d595e9",
-      "baseVariableBorrowRate": "0",
-      "maxVariableBorrowRate": "840000000000000000000000000",
+      "baseVariableBorrowRate": "80000000000000000000000000",
+      "maxVariableBorrowRate": "920000000000000000000000000",
       "optimalUsageRatio": "450000000000000000000000000",
       "variableRateSlope1": "40000000000000000000000000",
       "variableRateSlope2": "800000000000000000000000000"
+    },
+    "0x8A76fe7fA6da27f85a626c5C53730B38D13603d7": {
+      "address": "0xCFDAdA7DCd2e785cF706BaDBC2B8Af5084d595e9",
+      "baseVariableBorrowRate": "0",
+      "maxVariableBorrowRate": "3100000000000000000000000000",
+      "optimalUsageRatio": "450000000000000000000000000",
+      "variableRateSlope1": "100000000000000000000000000",
+      "variableRateSlope2": "3000000000000000000000000000"
     },
     "0x9f0a74A92287E323Eb95c1cd9eCdBEb0e397cAe4": {
       "address": "0xCFDAdA7DCd2e785cF706BaDBC2B8Af5084d595e9",
@@ -458,6 +530,14 @@
       "variableRateSlope1": "100000000000000000000000000",
       "variableRateSlope2": "3000000000000000000000000000"
     },
+    "0xAd09Cd20e513E4d8cB78036F77Ab9AfdE8555929": {
+      "address": "0xCFDAdA7DCd2e785cF706BaDBC2B8Af5084d595e9",
+      "baseVariableBorrowRate": "0",
+      "maxVariableBorrowRate": "3070000000000000000000000000",
+      "optimalUsageRatio": "450000000000000000000000000",
+      "variableRateSlope1": "70000000000000000000000000",
+      "variableRateSlope2": "3000000000000000000000000000"
+    },
     "0xaE4EFbc7736f963982aACb17EFA37fCBAb924cB3": {
       "address": "0xCFDAdA7DCd2e785cF706BaDBC2B8Af5084d595e9",
       "baseVariableBorrowRate": "0",
@@ -468,11 +548,11 @@
     },
     "0xe343167631d89B6Ffc58B88d6b7fB0228795491D": {
       "address": "0xCFDAdA7DCd2e785cF706BaDBC2B8Af5084d595e9",
-      "baseVariableBorrowRate": "0",
-      "maxVariableBorrowRate": "140000000000000000000000000",
-      "optimalUsageRatio": "830000000000000000000000000",
-      "variableRateSlope1": "40000000000000000000000000",
-      "variableRateSlope2": "100000000000000000000000000"
+      "baseVariableBorrowRate": "60000000000000000000000000",
+      "maxVariableBorrowRate": "480000000000000000000000000",
+      "optimalUsageRatio": "900000000000000000000000000",
+      "variableRateSlope1": "20000000000000000000000000",
+      "variableRateSlope2": "400000000000000000000000000"
     },
     "0xfc421aD3C883Bf9E7C4f42dE845C4e4405799e73": {
       "address": "0xCFDAdA7DCd2e785cF706BaDBC2B8Af5084d595e9",
@@ -488,28 +568,71 @@
       "borrowableBitmap": "1",
       "collateralBitmap": "448",
       "eModeCategory": 1,
+      "isolated": true,
       "label": "LRT Main",
       "liquidationBonus": 10100,
       "liquidationThreshold": 9500,
       "ltv": 9300
     },
     "2": {
-      "borrowableBitmap": "44",
+      "borrowableBitmap": "36",
       "collateralBitmap": "1536",
       "eModeCategory": 2,
+      "isolated": true,
       "label": "sUSDe_USDe__USDT0_USDC_USDG",
       "liquidationBonus": 10400,
       "liquidationThreshold": 9200,
       "ltv": 9000
     },
     "3": {
-      "borrowableBitmap": "44",
+      "borrowableBitmap": "36",
       "collateralBitmap": "1024",
       "eModeCategory": 3,
+      "isolated": true,
       "label": "USDe__USDT0_USDC_USDG",
       "liquidationBonus": 10200,
       "liquidationThreshold": 9300,
       "ltv": 9000
+    },
+    "4": {
+      "borrowableBitmap": "4",
+      "collateralBitmap": "4096",
+      "eModeCategory": 4,
+      "isolated": true,
+      "label": "syrupUSDT__USDT0",
+      "liquidationBonus": 10400,
+      "liquidationThreshold": 9200,
+      "ltv": 9000
+    },
+    "5": {
+      "borrowableBitmap": "4",
+      "collateralBitmap": "1536",
+      "eModeCategory": 5,
+      "isolated": true,
+      "label": "sUSDe_USDe__USDT0_USDG",
+      "liquidationBonus": 10400,
+      "liquidationThreshold": 9200,
+      "ltv": 9000
+    },
+    "6": {
+      "borrowableBitmap": "16",
+      "collateralBitmap": "2048",
+      "eModeCategory": 6,
+      "isolated": true,
+      "label": "SolvBTC__GHO",
+      "liquidationBonus": 10750,
+      "liquidationThreshold": 7200,
+      "ltv": 7000
+    },
+    "7": {
+      "borrowableBitmap": "8",
+      "collateralBitmap": "8192",
+      "eModeCategory": 7,
+      "isolated": true,
+      "label": "kHYPE__USDG",
+      "liquidationBonus": 11000,
+      "liquidationThreshold": 7200,
+      "ltv": 6500
     }
   },
   "poolConfig": {
@@ -526,73 +649,33 @@
       "balanceDiff": null,
       "nonceDiff": null,
       "stateDiff": {
-        "0x0ffe031ee7f67944a037276fd51f48fcc2fe05a729c43144606bc8777da8014f": {
-          "previousValue": "0x0069cb8370000000000002000000000000000000000000000000000000000000",
-          "newValue": "0x0069cb8370000000000003000000000000000000000000000000000000000000"
+        "0xb79c508b45d95db38395ed273cca5afa4bcb8f1225ec7e9c849430db27d6f0fe": {
+          "previousValue": "0x006ae0b50a000000000002000000000000000000000000000000000000000000",
+          "newValue": "0x006ae0b50a000000000003000000000000000000000000000000000000000000"
         },
-        "0x0ffe031ee7f67944a037276fd51f48fcc2fe05a729c43144606bc8777da80150": {
-          "previousValue": "0x000000000000000000093a8000000000000069f9a7f100000000000000000000",
-          "newValue": "0x000000000000000000093a8000000000000069f9a7f100000000000069cb8371"
+        "0xb79c508b45d95db38395ed273cca5afa4bcb8f1225ec7e9c849430db27d6f0ff": {
+          "previousValue": "0x000000000000000000093a800000000000006b0ed98b00000000000000000000",
+          "newValue": "0x000000000000000000093a800000000000006b0ed98b0000000000006ae0b50b"
         }
       }
     },
     "0x2816cf15f6d2a220e789aa011d5ee4eb6c47feba": {
       "label": null,
-      "contract": "lib/aave-v3-origin-private/src/contracts/misc/aave-upgradeability/InitializableImmutableAdminUpgradeabilityProxy.sol:InitializableImmutableAdminUpgradeabilityProxy",
+      "contract": null,
       "balanceDiff": null,
       "nonceDiff": null,
       "stateDiff": {
         "0x0000000000000000000000000000000000000000000000000000000000000000": {
-          "previousValue": "0x000000000000000000000000000000000000000000000000000000000000000a",
-          "newValue": "0x000000000000000000000000000000000000000000000000000000000000000b"
+          "previousValue": "0x000000000000000000000000000000000000000000000000000000000000000b",
+          "newValue": "0x000000000000000000000000000000000000000000000000000000000000000c"
         },
         "0x0000000000000000000000000000000000000000000000000000000000000001": {
           "previousValue": "0x0000000000000000000000000000000000000000000000000000000000000000",
           "newValue": "0x0000000000000000000000000000000000000000000000000000000000000000"
         },
-        "0x0aa126583ac3a901713d8d5929bc7659f63b33065f64d43f2b2f95ddf3a5abf3": {
-          "previousValue": "0x10000000000000000000000000002faf080002625a0003e8a506000000000000",
-          "newValue": "0x10000000000000000000000000002faf080002625a0003e88506000000000000"
-        },
-        "0x3157074825d66a4cd143024ab2f0bc00658082dadc139ee1aba99e9a39981044": {
-          "previousValue": "0x1000000000000000000000000000ee6b28000d693a4003e8a506000000000000",
-          "newValue": "0x1000000000000000000000000000ee6b28000d693a4003e88506000000000000"
-        },
         "0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc": {
-          "previousValue": "0x0000000000000000000000007f6036c2a9244e766f9ccd8de78d8f79f80e5408",
-          "newValue": "0x0000000000000000000000006a056da055c616cd89dbcd0dc4b3f4e0f6162eb6"
-        },
-        "0x7e47f63b8ad37aba97855785563ef3d1cc728913e5cd518cf2e44986d45aa777": {
-          "previousValue": "0x100000000000000000000003e80165a0bc001443fd0003e8a50628d21e781d4c",
-          "newValue": "0x100000000000000000000003e80165a0bc001443fd0003e8850628d21e781d4c"
-        }
-      }
-    },
-    "0x4f221e5c0b7103f7e3291e10097de6d9e3bfc02d": {
-      "label": null,
-      "contract": "lib/aave-v3-origin-private/src/contracts/misc/aave-upgradeability/InitializableImmutableAdminUpgradeabilityProxy.sol:InitializableImmutableAdminUpgradeabilityProxy",
-      "balanceDiff": null,
-      "nonceDiff": null,
-      "stateDiff": {
-        "0x0000000000000000000000000000000000000000000000000000000000000000": {
-          "previousValue": "0x0000000000000000000000000000000000000000000000000000000000000007",
-          "newValue": "0x0000000000000000000000000000000000000000000000000000000000000008"
-        },
-        "0x0000000000000000000000000000000000000000000000000000000000000001": {
-          "previousValue": "0x0000000000000000000000000000000000000000000000000000000000000000",
-          "newValue": "0x0000000000000000000000000000000000000000000000000000000000000000"
-        },
-        "0x0000000000000000000000000000000000000000000000000000000000000034": {
-          "previousValue": "0x0000000000000000000000004172e6aaec070acb31aace343a58c93e4c70f44d",
-          "newValue": "0x0000000000000000000000004172e6aaec070acb31aace343a58c93e4c70f44d"
-        },
-        "0x0000000000000000000000000000000000000000000000000000000000000035": {
-          "previousValue": "0x0000000000000000000000002816cf15f6d2a220e789aa011d5ee4eb6c47feba",
-          "newValue": "0x0000000000000000000000002816cf15f6d2a220e789aa011d5ee4eb6c47feba"
-        },
-        "0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc": {
-          "previousValue": "0x0000000000000000000000006fddde45f777a4e461b0721a578b169b44579623",
-          "newValue": "0x000000000000000000000000ff42ce30054dce7dc7c1282a9a497aa58eabce99"
+          "previousValue": "0x0000000000000000000000006a056da055c616cd89dbcd0dc4b3f4e0f6162eb6",
+          "newValue": "0x0000000000000000000000007b554fab4a93f910b850bd098d1a223f75b097d3"
         }
       }
     }
@@ -600,29 +683,8 @@
   "logs": [
     {
       "topics": [
-        "0x74adf6aaf58c08bc4f993640385e136522375ea3d1589a10d02adbb906c67d1c"
-      ],
-      "data": "0x0000000000000000000000000200c29006150606b650577bbe7b6248f58470c10000000000000000000000000000000000000000000000000000000000000000",
-      "emitter": "0x4f221e5c0B7103f7e3291E10097de6D9e3BfC02d"
-    },
-    {
-      "topics": [
-        "0x74adf6aaf58c08bc4f993640385e136522375ea3d1589a10d02adbb906c67d1c"
-      ],
-      "data": "0x000000000000000000000000e343167631d89b6ffc58b88d6b7fb0228795491d0000000000000000000000000000000000000000000000000000000000000000",
-      "emitter": "0x4f221e5c0B7103f7e3291E10097de6D9e3BfC02d"
-    },
-    {
-      "topics": [
-        "0x74adf6aaf58c08bc4f993640385e136522375ea3d1589a10d02adbb906c67d1c"
-      ],
-      "data": "0x0000000000000000000000002d270e6886d130d724215a266106e6832161eaed0000000000000000000000000000000000000000000000000000000000000000",
-      "emitter": "0x4f221e5c0B7103f7e3291E10097de6D9e3BfC02d"
-    },
-    {
-      "topics": [
         "0xbc7cd75a20ee27fd9adebab32041f755214dbc6bffa90cc0225b39da2e5c2d3b",
-        "0x0000000000000000000000006a056da055c616cd89dbcd0dc4b3f4e0f6162eb6"
+        "0x0000000000000000000000007b554fab4a93f910b850bd098d1a223f75b097d3"
       ],
       "data": "0x",
       "emitter": "0x2816cf15F6d2A220E789aA011D5EE4eB6c47FEbA"
@@ -630,25 +692,8 @@
     {
       "topics": [
         "0x90affc163f1a2dfedcd36aa02ed992eeeba8100a4014f0b4cdc20ea265a66627",
-        "0x0000000000000000000000007f6036c2a9244e766f9ccd8de78d8f79f80e5408",
-        "0x0000000000000000000000006a056da055c616cd89dbcd0dc4b3f4e0f6162eb6"
-      ],
-      "data": "0x",
-      "emitter": "0x4172E6aAEC070ACB31aaCE343A58c93E4C70f44D"
-    },
-    {
-      "topics": [
-        "0xbc7cd75a20ee27fd9adebab32041f755214dbc6bffa90cc0225b39da2e5c2d3b",
-        "0x000000000000000000000000ff42ce30054dce7dc7c1282a9a497aa58eabce99"
-      ],
-      "data": "0x",
-      "emitter": "0x4f221e5c0B7103f7e3291E10097de6D9e3BfC02d"
-    },
-    {
-      "topics": [
-        "0x8932892569eba59c8382a089d9b732d1f49272878775235761a2a6b0309cd465",
-        "0x0000000000000000000000006fddde45f777a4e461b0721a578b169b44579623",
-        "0x000000000000000000000000ff42ce30054dce7dc7c1282a9a497aa58eabce99"
+        "0x0000000000000000000000006a056da055c616cd89dbcd0dc4b3f4e0f6162eb6",
+        "0x0000000000000000000000007b554fab4a93f910b850bd098d1a223f75b097d3"
       ],
       "data": "0x",
       "emitter": "0x4172E6aAEC070ACB31aaCE343A58c93E4C70f44D"
@@ -656,16 +701,16 @@
     {
       "topics": [
         "0x528c26f4cc05f95dc8bad30284946548f08ec44f7dd536473f28b08c65334cdd",
-        "0x0000000000000000000000009164f13c9d04dec312942ccaa31a644956f9c48d"
+        "0x000000000000000000000000ec46bc675b8616808aaf2bc071532cdd4467a632"
       ],
-      "data": "0x000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000069cb8371000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000001200000000000000000000000000000000000000000000000000000000000000009657865637574652829000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+      "data": "0x000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c00000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000006ae0b50b000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000001200000000000000000000000000000000000000000000000000000000000000009657865637574652829000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
       "emitter": "0x1dF462e2712496373A347f8ad10802a5E95f053D"
     },
     {
       "topics": [
         "0xda6084bb0aa902a7f6da10ba185d4aa129414651c90772417eff02a52112af2a"
       ],
-      "data": "0x0000000000000000000000000000000000000000000000000000000000000014",
+      "data": "0x0000000000000000000000000000000000000000000000000000000000000021",
       "emitter": "0x1dE9CB9420Dd1f2cCeFFf9393E126b800D413b7A"
     }
   ]

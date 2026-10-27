@@ -6,12 +6,13 @@ import {DeploymentLibrary} from "../script/Deploy.s.sol";
 import {UpgradeTest} from "./UpgradeTest.t.sol";
 import {Deployments} from "../src/Deployments.sol";
 
-contract SonicTest is UpgradeTest("sonic", 66372534) {
+/// forge-config: default.networks.network = "monad"
+contract MonadTest is UpgradeTest("monad", 117065308) {
   function _getPayload() internal virtual override returns (address) {
-    return DeploymentLibrary._deploySonic();
+    return DeploymentLibrary._deployMonad();
   }
 
   function _getDeployedPayload() internal virtual override returns (address) {
-    return Deployments.SONIC;
+    return Deployments.MONAD;
   }
 }
