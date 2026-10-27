@@ -22,7 +22,7 @@
       "oracle": "0x6b7c151653c35845a5826b15435fc055A9Db1D0C",
       "oracleDecimals": 8,
       "oracleDescription": "Capped AUSD / USD",
-      "oracleLatestAnswer": "99975317",
+      "oracleLatestAnswer": "99977749",
       "reserveFactor": 1000,
       "supplyCap": 40000000,
       "symbol": "AUSD",
@@ -54,7 +54,7 @@
       "oracle": "0x7c1DbD7879C421ebd1A2dE397Ea6Bedb5D3795A5",
       "oracleDecimals": 8,
       "oracleDescription": "Capped wstETH / stETH(ETH) / USD",
-      "oracleLatestAnswer": "289182297422",
+      "oracleLatestAnswer": "292940551728",
       "reserveFactor": 500,
       "supplyCap": 9200,
       "symbol": "wstETH",
@@ -86,7 +86,7 @@
       "oracle": "0x99946Fe1a49D8650a31eFE0fcFee0508892742f0",
       "oracleDecimals": 8,
       "oracleDescription": "Capped sUSDe / USDT0 / USD",
-      "oracleLatestAnswer": "125328227",
+      "oracleLatestAnswer": "125349731",
       "reserveFactor": 1000,
       "supplyCap": 1000000,
       "symbol": "sUSDe",
@@ -101,7 +101,7 @@
       "aToken": "0x37cAbe3eDD86165886877Cc8b6Be10269f21893d",
       "aTokenName": "Aave Monad USDe",
       "aTokenSymbol": "aMonUSDe",
-      "aTokenUnderlyingBalance": "121300369566837061310650536",
+      "aTokenUnderlyingBalance": "121300370830308778771663921",
       "borrowCap": 10000000,
       "borrowingEnabled": true,
       "decimals": 18,
@@ -118,7 +118,7 @@
       "oracle": "0x3abA25B23378A84FD7638E20F9Af86A66000f090",
       "oracleDecimals": 8,
       "oracleDescription": "Capped USDe / USD",
-      "oracleLatestAnswer": "99860210",
+      "oracleLatestAnswer": "99877344",
       "reserveFactor": 2500,
       "supplyCap": 150000000,
       "symbol": "USDe",
@@ -127,13 +127,13 @@
       "variableDebtToken": "0x3BE6c069b81423BccF758eb95004E0324Af2cDD8",
       "variableDebtTokenName": "Aave Monad Variable Debt USDe",
       "variableDebtTokenSymbol": "variableDebtMonUSDe",
-      "virtualBalance": "121300369566837061310650536"
+      "virtualBalance": "121300370830308778771663921"
     },
     "0x754704Bc059F8C67012fEd69BC8A327a5aafb603": {
       "aToken": "0x35a73BAcb179d3740395A3ceCc87FF2e581d6042",
       "aTokenName": "Aave Monad USDC",
       "aTokenSymbol": "aMonUSDC",
-      "aTokenUnderlyingBalance": "13472840383680",
+      "aTokenUnderlyingBalance": "12978496627098",
       "borrowCap": 315000000,
       "borrowingEnabled": true,
       "decimals": 6,
@@ -150,7 +150,7 @@
       "oracle": "0x787962943811D279d01eC973Bd3A15f1b3e1F0D9",
       "oracleDecimals": 8,
       "oracleDescription": "Capped USDC / USD",
-      "oracleLatestAnswer": "99968415",
+      "oracleLatestAnswer": "99974184",
       "reserveFactor": 1000,
       "supplyCap": 350000000,
       "symbol": "USDC",
@@ -159,7 +159,7 @@
       "variableDebtToken": "0x9F555aB84C4e0a531B50283f09Dba7A97134c4e4",
       "variableDebtTokenName": "Aave Monad Variable Debt USDC",
       "variableDebtTokenSymbol": "variableDebtMonUSDC",
-      "virtualBalance": "13472840383680"
+      "virtualBalance": "12978496627098"
     },
     "0x8B562578b2f9Aa8C14cCda3c5d6CBCEaD3B06a57": {
       "aToken": "0x8F8d143F1FCe0A57A6e80D8DF7f7288703b2Eb7e",
@@ -182,7 +182,7 @@
       "oracle": "0x4dc9Ee8d739411242303f7F78C6610d5B0371a2C",
       "oracleDecimals": 8,
       "oracleDescription": "PT Capped AUSD AUSD/USD linear discount 17DEC2026",
-      "oracleLatestAnswer": "99182277",
+      "oracleLatestAnswer": "99186894",
       "reserveFactor": 2000,
       "supplyCap": 60000000,
       "symbol": "PT-AUSD-17DEC2026",
@@ -214,7 +214,7 @@
       "oracle": "0x6D8f31268E94Bec0b0E07bc06b561b8B749F3127",
       "oracleDecimals": 8,
       "oracleDescription": "PT Capped AUSD AUSD/USD linear discount 8OCT2026",
-      "oracleLatestAnswer": "99975317",
+      "oracleLatestAnswer": "99977749",
       "reserveFactor": 2000,
       "supplyCap": 1,
       "symbol": "PT-AUSD-8OCT2026",
@@ -246,7 +246,7 @@
       "oracle": "0x53E2d62Cd8c36104DEC69bA0CB3Bb599d6D42FE1",
       "oracleDecimals": 8,
       "oracleDescription": "Capped weETH / eETH(ETH) / USD",
-      "oracleLatestAnswer": "256566266593",
+      "oracleLatestAnswer": "259900638319",
       "reserveFactor": 4500,
       "supplyCap": 10300,
       "symbol": "weETH",
@@ -278,7 +278,7 @@
       "oracle": "0x47F1D18329Ae59341617B7a5BE59605B63f0e373",
       "oracleDecimals": 8,
       "oracleDescription": "ETH / USD (USD Scaled)",
-      "oracleLatestAnswer": "231856000000",
+      "oracleLatestAnswer": "234869233583",
       "reserveFactor": 1500,
       "supplyCap": 10000,
       "symbol": "WETH",
@@ -310,7 +310,7 @@
       "oracle": "0xB1f36c815761a3F77CE26c013F646cdCdCd06384",
       "oracleDecimals": 8,
       "oracleDescription": "Capped SyrupUSDC / USDC / USD",
-      "oracleLatestAnswer": "118961008",
+      "oracleLatestAnswer": "118967873",
       "reserveFactor": 1000,
       "supplyCap": 150000000,
       "symbol": "syrupUSDC",
@@ -325,7 +325,7 @@
       "aToken": "0xDBb2e1b6BC94328Df2662A1796AB6A23fCde3199",
       "aTokenName": "Aave Monad mUSD",
       "aTokenSymbol": "aMonmUSD",
-      "aTokenUnderlyingBalance": "8367490602675",
+      "aTokenUnderlyingBalance": "8413686833511",
       "borrowCap": 40000000,
       "borrowingEnabled": true,
       "decimals": 6,
@@ -351,7 +351,7 @@
       "variableDebtToken": "0x9837392b2b5b2Ce7C39A357E0eB6E07d9fFb76Cd",
       "variableDebtTokenName": "Aave Monad Variable Debt mUSD",
       "variableDebtTokenSymbol": "variableDebtMonmUSD",
-      "virtualBalance": "8367490602675"
+      "virtualBalance": "8413686833511"
     },
     "0xd18B7EC58Cdf4876f6AFebd3Ed1730e4Ce10414b": {
       "aToken": "0x1F5e388861A32226c716e922CE748a6FEE5e8e57",
@@ -374,7 +374,7 @@
       "oracle": "0x48692d15DA2636E1b0335344104Ce9d92f231DdA",
       "oracleDecimals": 8,
       "oracleDescription": "CBBTC / USD (USD Scaled)",
-      "oracleLatestAnswer": "7994179333156",
+      "oracleLatestAnswer": "8057253339124",
       "reserveFactor": 700,
       "supplyCap": 400,
       "symbol": "cbBTC",
@@ -389,7 +389,7 @@
       "aToken": "0x9531E6bC99D7F7f0596ed7bA5b846Ba9Eb60468c",
       "aTokenName": "Aave Monad USDT0",
       "aTokenSymbol": "aMonUSDT0",
-      "aTokenUnderlyingBalance": "10040273911224",
+      "aTokenUnderlyingBalance": "10040332819343",
       "borrowCap": 180000000,
       "borrowingEnabled": true,
       "decimals": 6,
@@ -406,7 +406,7 @@
       "oracle": "0x3c187a25f0f05E009DA794069682653e40062730",
       "oracleDecimals": 8,
       "oracleDescription": "Capped USDT0 / USD",
-      "oracleLatestAnswer": "99860210",
+      "oracleLatestAnswer": "99877344",
       "reserveFactor": 1000,
       "supplyCap": 200000000,
       "symbol": "USDT0",
@@ -415,13 +415,13 @@
       "variableDebtToken": "0x85812C8eEeB8723e3C60d0Dc78e697b4E7e5a35D",
       "variableDebtTokenName": "Aave Monad Variable Debt USDT0",
       "variableDebtTokenSymbol": "variableDebtMonUSDT0",
-      "virtualBalance": "10040273911224"
+      "virtualBalance": "10040332819343"
     },
     "0xfc421aD3C883Bf9E7C4f42dE845C4e4405799e73": {
       "aToken": "0x4586face17B0e3D4d51EcABb4B4EBC2354b61b0D",
       "aTokenName": "Aave Monad GHO",
       "aTokenSymbol": "aMonGHO",
-      "aTokenUnderlyingBalance": "1512240606583565765154838",
+      "aTokenUnderlyingBalance": "1512247180299313749802316",
       "borrowCap": 54000000,
       "borrowingEnabled": true,
       "decimals": 18,
@@ -447,7 +447,7 @@
       "variableDebtToken": "0x1dd98eDe37480c2E0827a107c68f442aA516E7fc",
       "variableDebtTokenName": "Aave Monad Variable Debt GHO",
       "variableDebtTokenSymbol": "variableDebtMonGHO",
-      "virtualBalance": "1512240606583565765154838"
+      "virtualBalance": "1512247180299313749802316"
     }
   },
   "strategies": {
@@ -641,12 +641,12 @@
       "nonceDiff": null,
       "stateDiff": {
         "0x2d72af3c1b2b2956e6f694fb741556d5ca9524373974378cdbec16afa8b84164": {
-          "previousValue": "0x006ae0b501000000000002000000000000000000000000000000000000000000",
-          "newValue": "0x006ae0b501000000000003000000000000000000000000000000000000000000"
+          "previousValue": "0x006ae0e449000000000002000000000000000000000000000000000000000000",
+          "newValue": "0x006ae0e449000000000003000000000000000000000000000000000000000000"
         },
         "0x2d72af3c1b2b2956e6f694fb741556d5ca9524373974378cdbec16afa8b84165": {
-          "previousValue": "0x000000000000000000093a800000000000006b0ed98200000000000000000000",
-          "newValue": "0x000000000000000000093a800000000000006b0ed9820000000000006ae0b502"
+          "previousValue": "0x000000000000000000093a800000000000006b0f08ca00000000000000000000",
+          "newValue": "0x000000000000000000093a800000000000006b0f08ca0000000000006ae0e44a"
         }
       }
     },
@@ -694,7 +694,7 @@
         "0x528c26f4cc05f95dc8bad30284946548f08ec44f7dd536473f28b08c65334cdd",
         "0x000000000000000000000000cee8cbb57a23fff935a125f62574e527dbc2ec82"
       ],
-      "data": "0x000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c00000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000006ae0b502000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000001200000000000000000000000000000000000000000000000000000000000000009657865637574652829000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+      "data": "0x000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c00000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000006ae0e44a000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000001200000000000000000000000000000000000000000000000000000000000000009657865637574652829000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
       "emitter": "0xa9d0EAFF48cE1DF468f9eAeb7e628c413343F6A2"
     },
     {

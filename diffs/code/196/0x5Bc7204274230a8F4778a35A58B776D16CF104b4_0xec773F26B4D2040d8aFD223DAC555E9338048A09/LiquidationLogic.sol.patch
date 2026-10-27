@@ -1,0 +1,15 @@
+Index: lib/aave-v3-origin-private/src/contracts/protocol/libraries/logic/LiquidationLogic.sol
+===================================================================
+--- lib/aave-v3-origin-private/src/contracts/protocol/libraries/logic/LiquidationLogic.sol
++++ lib/aave-v3-origin-private/src/contracts/protocol/libraries/logic/LiquidationLogic.sol
+@@ -366,9 +366,9 @@
+         // detect that no collateral remains.
+         //
+         // For high-decimal tokens (e.g., 18-decimal WETH), a genuine leftover of a few wei may
+         // round to $0 in base currency. In this case consumed$ also equals totalCollateral$ because
+-        // the worthless dust vanishes in the floor division — so hasNoCollateralLeft is set correctly.
++        // the worthless dust vanishes in the floor division â so hasNoCollateralLeft is set correctly.
+         //
+         // Both getATokenBurnScaledAmount and getATokenTransferScaledAmount use rayDivCeil,
+         // so the scaled consumption is correct for both the receiveAToken and the burn path.
+         bool hasNoCollateralLeft;

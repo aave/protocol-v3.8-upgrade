@@ -53,7 +53,7 @@
       "oracle": "0xe1D97bF61901B075E9626c8A2340a7De385861Ef",
       "oracleDecimals": 8,
       "oracleDescription": "Capped wstETH / stETH(ETH) / USD",
-      "oracleLatestAnswer": "289986871431",
+      "oracleLatestAnswer": "293097047475",
       "reserveFactor": 500,
       "supplyCap": 80000,
       "symbol": "wstETH",
@@ -85,7 +85,7 @@
       "oracle": "0x42bc86f2f08419280a99d8fbEa4672e7c30a86ec",
       "oracleDecimals": 8,
       "oracleDescription": "Capped sUSDe / USDT / USD",
-      "oracleLatestAnswer": "125311450",
+      "oracleLatestAnswer": "125319351",
       "reserveFactor": 1000,
       "supplyCap": 1,
       "symbol": "sUSDe",
@@ -100,7 +100,7 @@
       "aToken": "0x2A1FBcb52Ed4d9b23daD17E1E8Aed4BB0E6079b8",
       "aTokenName": "Aave Ethereum Lido USDC",
       "aTokenSymbol": "aEthLidoUSDC",
-      "aTokenUnderlyingBalance": "2067874096006",
+      "aTokenUnderlyingBalance": "2129511202159",
       "borrowCap": 22500000,
       "borrowingEnabled": true,
       "decimals": 6,
@@ -117,7 +117,7 @@
       "oracle": "0x3f73F03aa83B2A48ed27E964eD0fDb590332095B",
       "oracleDecimals": 8,
       "oracleDescription": "Capped USDC / USD",
-      "oracleLatestAnswer": "99979651",
+      "oracleLatestAnswer": "99971803",
       "reserveFactor": 1000,
       "supplyCap": 25000000,
       "symbol": "USDC",
@@ -126,7 +126,7 @@
       "variableDebtToken": "0xeD90dE2D824Ee766c6Fd22E90b12e598f681dc9F",
       "variableDebtTokenName": "Aave Ethereum Lido Variable Debt USDC",
       "variableDebtTokenSymbol": "variableDebtEthLidoUSDC",
-      "virtualBalance": "2067873962446"
+      "virtualBalance": "2129511068599"
     },
     "0xA1290d69c65A6Fe4DF752f95823fae25cB99e5A7": {
       "aToken": "0x56D919E7B25aA42F3F8a4BC77b8982048F2E84B4",
@@ -149,7 +149,7 @@
       "oracle": "0x7292C95A5f6A501a9c4B34f6393e221F2A0139c3",
       "oracleDecimals": 8,
       "oracleDescription": "Capped rsETH / ETH / USD",
-      "oracleLatestAnswer": "251776668644",
+      "oracleLatestAnswer": "254477031455",
       "reserveFactor": 15,
       "supplyCap": 5000,
       "symbol": "rsETH",
@@ -164,7 +164,7 @@
       "aToken": "0xfA1fDbBD71B0aA16162D76914d69cD8CB3Ef92da",
       "aTokenName": "Aave Ethereum Lido WETH",
       "aTokenSymbol": "aEthLidoWETH",
-      "aTokenUnderlyingBalance": "3427703098310559633329",
+      "aTokenUnderlyingBalance": "3393735923315108405564",
       "borrowCap": 54000,
       "borrowingEnabled": true,
       "decimals": 18,
@@ -181,7 +181,7 @@
       "oracle": "0x5424384B256154046E9667dDFaaa5e550145215e",
       "oracleDecimals": 8,
       "oracleDescription": "ETH / USD",
-      "oracleLatestAnswer": "232486610000",
+      "oracleLatestAnswer": "234980082485",
       "reserveFactor": 1500,
       "supplyCap": 60000,
       "symbol": "WETH",
@@ -190,7 +190,7 @@
       "variableDebtToken": "0x91b7d78BF92db564221f6B5AeE744D1727d1Dd1e",
       "variableDebtTokenName": "Aave Ethereum Lido Variable Debt WETH",
       "variableDebtTokenSymbol": "variableDebtEthLidoWETH",
-      "virtualBalance": "3427703098310559633329"
+      "virtualBalance": "3393735923315108405564"
     },
     "0xD11c452fc99cF405034ee446803b6F6c1F6d5ED8": {
       "aToken": "0xce8c60fd8390eFCc3Fc66A3f0bd64BEb969e750E",
@@ -213,7 +213,7 @@
       "oracle": "0x85968026294b8f8Fb86d6bF3Cda079f9376aD05A",
       "oracleDecimals": 8,
       "oracleDescription": "Capped tETH / wstETH / ETH / USD",
-      "oracleLatestAnswer": "292245595748",
+      "oracleLatestAnswer": "295379997131",
       "reserveFactor": 5000,
       "supplyCap": 20000,
       "symbol": "tETH",
@@ -245,7 +245,7 @@
       "oracle": "0xF3d49021fF3bbBFDfC1992A4b09E5D1d141D044C",
       "oracleDecimals": 8,
       "oracleDescription": "Capped ezETH / ezETH(ETH) / USD",
-      "oracleLatestAnswer": "253114978610",
+      "oracleLatestAnswer": "255829695104",
       "reserveFactor": 1500,
       "supplyCap": 1,
       "symbol": "ezETH",
@@ -470,12 +470,12 @@
       "nonceDiff": null,
       "stateDiff": {
         "0xf2c3926e19d51dfb5fdba3d1ae96d00a3ca56713bc0ef89444af3468e8199963": {
-          "previousValue": "0x006ae0b4ee000000000002000000000000000000000000000000000000000000",
-          "newValue": "0x006ae0b4ee000000000003000000000000000000000000000000000000000000"
+          "previousValue": "0x006ae0e43a000000000002000000000000000000000000000000000000000000",
+          "newValue": "0x006ae0e43a000000000003000000000000000000000000000000000000000000"
         },
         "0xf2c3926e19d51dfb5fdba3d1ae96d00a3ca56713bc0ef89444af3468e8199964": {
-          "previousValue": "0x000000000000000000093a800000000000006b0ed96f00000000000000000000",
-          "newValue": "0x000000000000000000093a800000000000006b0ed96f0000000000006ae0b4ef"
+          "previousValue": "0x000000000000000000093a800000000000006b0f08bb00000000000000000000",
+          "newValue": "0x000000000000000000093a800000000000006b0f08bb0000000000006ae0e43b"
         }
       }
     }
@@ -503,7 +503,7 @@
         "0x528c26f4cc05f95dc8bad30284946548f08ec44f7dd536473f28b08c65334cdd",
         "0x00000000000000000000000008001e24d6906ffdbe16012059cd04a7770d83b8"
       ],
-      "data": "0x000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c00000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000006ae0b4ef000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000001200000000000000000000000000000000000000000000000000000000000000009657865637574652829000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+      "data": "0x000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c00000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000006ae0e43b000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000001200000000000000000000000000000000000000000000000000000000000000009657865637574652829000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
       "emitter": "0x5300A1a15135EA4dc7aD5a167152C01EFc9b192A"
     },
     {
