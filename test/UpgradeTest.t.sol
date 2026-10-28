@@ -104,52 +104,52 @@ abstract contract UpgradeTest is ProtocolV3TestBase {
 
   /// forge-config: default.isolate = true
   function test_diff() external virtual {
-    UpgradePayload _payload = UpgradePayload(_getTestPayload());
-    IPool pool = _payload.POOL();
+    UpgradePayload payload = UpgradePayload(_getTestPayload());
+    IPool pool = payload.POOL();
 
     defaultTest(
-      string(abi.encodePacked(vm.toString(block.chainid), "_", vm.toString(address(pool)))), pool, address(_payload)
+      string(abi.encodePacked(vm.toString(block.chainid), "_", vm.toString(address(pool)))), pool, address(payload)
     );
   }
 
   function test_upgrade() public virtual {
-    UpgradePayload _payload = UpgradePayload(_getTestPayload());
-    IPool pool = _payload.POOL();
-    assertEq(IPoolRevision(address(pool)).POOL_REVISION(), _payload.PREVIOUS_POOL_REVISION());
+    UpgradePayload payload = UpgradePayload(_getTestPayload());
+    IPool pool = payload.POOL();
+    assertEq(IPoolRevision(address(pool)).POOL_REVISION(), payload.PREVIOUS_POOL_REVISION());
 
-    executePayload(vm, address(_payload));
+    executePayload(vm, address(payload));
 
-    assertEq(_getImplementation(address(pool)), _payload.POOL_IMPL());
+    assertEq(_getImplementation(address(pool)), payload.POOL_IMPL());
     assertEq(IPoolRevision(address(pool)).POOL_REVISION(), 12);
   }
 
   function test_initialize_poolProxyAtNewRevision() external {
-    UpgradePayload _payload = UpgradePayload(_getTestPayload());
-    address pool = address(_payload.POOL());
-    assertEq(uint256(vm.load(pool, LAST_INITIALIZED_REVISION_SLOT)), _payload.PREVIOUS_POOL_REVISION());
+    UpgradePayload payload = UpgradePayload(_getTestPayload());
+    address pool = address(payload.POOL());
+    assertEq(uint256(vm.load(pool, LAST_INITIALIZED_REVISION_SLOT)), payload.PREVIOUS_POOL_REVISION());
 
-    executePayload(vm, address(_payload));
+    executePayload(vm, address(payload));
 
-    assertEq(uint256(vm.load(pool, LAST_INITIALIZED_REVISION_SLOT)), _payload.NEW_POOL_REVISION());
+    assertEq(uint256(vm.load(pool, LAST_INITIALIZED_REVISION_SLOT)), payload.NEW_POOL_REVISION());
     assertEq(uint256(vm.load(pool, INITIALIZING_SLOT)), 0);
 
-    IPoolAddressesProvider addressesProvider = _payload.POOL_ADDRESSES_PROVIDER();
+    IPoolAddressesProvider addressesProvider = payload.POOL_ADDRESSES_PROVIDER();
     vm.expectRevert(bytes("Contract instance has already been initialized"));
     PoolInstance(pool).initialize(addressesProvider);
   }
 
   function test_initialize_implementationLocked() external {
-    UpgradePayload _payload = UpgradePayload(_getTestPayload());
-    address poolImpl = _payload.POOL_IMPL();
+    UpgradePayload payload = UpgradePayload(_getTestPayload());
+    address poolImpl = payload.POOL_IMPL();
 
-    assertEq(uint256(vm.load(poolImpl, LAST_INITIALIZED_REVISION_SLOT)), _payload.NEW_POOL_REVISION());
+    assertEq(uint256(vm.load(poolImpl, LAST_INITIALIZED_REVISION_SLOT)), payload.NEW_POOL_REVISION());
     assertEq(uint256(vm.load(poolImpl, INITIALIZING_SLOT)), 0);
 
-    IPoolAddressesProvider addressesProvider = _payload.POOL_ADDRESSES_PROVIDER();
+    IPoolAddressesProvider addressesProvider = payload.POOL_ADDRESSES_PROVIDER();
     vm.expectRevert(bytes("Contract instance has already been initialized"));
     PoolInstance(poolImpl).initialize(addressesProvider);
 
-    executePayload(vm, address(_payload));
+    executePayload(vm, address(payload));
 
     assertEq(_getImplementation(addressesProvider.getPool()), poolImpl);
   }
@@ -161,10 +161,10 @@ abstract contract UpgradeTest is ProtocolV3TestBase {
   }
 
   function test_execute_onlyExpectedStorageWrites() external {
-    UpgradePayload _payload = UpgradePayload(_getTestPayload());
-    address pool = address(_payload.POOL());
-    IPayloadsControllerCore controller = GovV3Helpers.getPayloadsController(_payload.POOL(), block.chainid);
-    uint40 payloadId = GovV3Helpers.readyPayload(vm, address(_payload), address(controller));
+    UpgradePayload payload = UpgradePayload(_getTestPayload());
+    address pool = address(payload.POOL());
+    IPayloadsControllerCore controller = GovV3Helpers.getPayloadsController(payload.POOL(), block.chainid);
+    uint40 payloadId = GovV3Helpers.readyPayload(vm, address(payload), address(controller));
 
     vm.startStateDiffRecording();
     controller.executePayload(payloadId);
@@ -181,18 +181,18 @@ abstract contract UpgradeTest is ProtocolV3TestBase {
   }
 
   function test_executorIsAddressesProviderOwner() external {
-    UpgradePayload _payload = UpgradePayload(_getTestPayload());
-    IPayloadsControllerCore controller = GovV3Helpers.getPayloadsController(_payload.POOL(), block.chainid);
+    UpgradePayload payload = UpgradePayload(_getTestPayload());
+    IPayloadsControllerCore controller = GovV3Helpers.getPayloadsController(payload.POOL(), block.chainid);
     address executor =
       controller.getExecutorSettingsByAccessControl(PayloadsControllerUtils.AccessControl.Level_1).executor;
 
-    assertEq(Ownable(address(_payload.POOL_ADDRESSES_PROVIDER())).owner(), executor);
+    assertEq(Ownable(address(payload.POOL_ADDRESSES_PROVIDER())).owner(), executor);
   }
 
   function test_poolFlavourUnchanged() external {
-    UpgradePayload _payload = UpgradePayload(_getTestPayload());
-    address previousImpl = _getImplementation(address(_payload.POOL()));
-    address newImpl = _payload.POOL_IMPL();
+    UpgradePayload payload = UpgradePayload(_getTestPayload());
+    address previousImpl = _getImplementation(address(payload.POOL()));
+    address newImpl = payload.POOL_IMPL();
 
     assertTrue(_hasSelector(previousImpl, IPool.getReserveData.selector));
     assertTrue(_hasSelector(newImpl, IPool.getReserveData.selector));
@@ -200,11 +200,11 @@ abstract contract UpgradeTest is ProtocolV3TestBase {
   }
 
   function test_config_reservesUnchanged() external {
-    UpgradePayload _payload = UpgradePayload(_getTestPayload());
-    IPool pool = _payload.POOL();
+    UpgradePayload payload = UpgradePayload(_getTestPayload());
+    IPool pool = payload.POOL();
     ReserveConfig[] memory configsBefore = _getReservesConfigs(pool);
 
-    executePayload(vm, address(_payload));
+    executePayload(vm, address(payload));
 
     ReserveConfig[] memory configsAfter = _getReservesConfigs(pool);
     _validateCountOfListings(0, configsBefore, configsAfter);
@@ -213,12 +213,12 @@ abstract contract UpgradeTest is ProtocolV3TestBase {
   }
 
   function test_config_reserveDataUnchanged() external {
-    UpgradePayload _payload = UpgradePayload(_getTestPayload());
-    IPool pool = _payload.POOL();
+    UpgradePayload payload = UpgradePayload(_getTestPayload());
+    IPool pool = payload.POOL();
     address[] memory reservesBefore = pool.getReservesList();
     bytes32[] memory statesBefore = _reserveStates(pool);
 
-    executePayload(vm, address(_payload));
+    executePayload(vm, address(payload));
 
     assertEq(pool.getReservesList(), reservesBefore);
     bytes32[] memory statesAfter = _reserveStates(pool);
@@ -228,21 +228,21 @@ abstract contract UpgradeTest is ProtocolV3TestBase {
   }
 
   function test_config_eModesUnchanged() external {
-    UpgradePayload _payload = UpgradePayload(_getTestPayload());
-    IPool pool = _payload.POOL();
+    UpgradePayload payload = UpgradePayload(_getTestPayload());
+    IPool pool = payload.POOL();
     uint8[] memory idsBefore = _getEModeCategoryIds(pool);
     DataTypes.EModeCategory[] memory categoriesBefore = new DataTypes.EModeCategory[](idsBefore.length);
     for (uint256 i = 0; i < idsBefore.length; i++) {
       categoriesBefore[i] = _getEModeCategory(pool, idsBefore[i]);
     }
 
-    executePayload(vm, address(_payload));
+    executePayload(vm, address(payload));
 
     uint8[] memory idsAfter = _getEModeCategoryIds(pool);
     assertEq(idsAfter.length, idsBefore.length);
     for (uint256 i = 0; i < idsBefore.length; i++) {
       assertEq(idsAfter[i], idsBefore[i]);
-      _validateEmodeCategory(_payload.POOL_ADDRESSES_PROVIDER(), idsBefore[i], categoriesBefore[i]);
+      _validateEmodeCategory(payload.POOL_ADDRESSES_PROVIDER(), idsBefore[i], categoriesBefore[i]);
       assertEq(pool.getEModeCategoryLtvzeroBitmap(idsBefore[i]), categoriesBefore[i].ltvzeroBitmap);
       assertEq(pool.getIsEModeCategoryIsolated(idsBefore[i]), categoriesBefore[i].isolated);
       assertEq(abi.encode(_getEModeCategory(pool, idsBefore[i])), abi.encode(categoriesBefore[i]));
@@ -250,12 +250,12 @@ abstract contract UpgradeTest is ProtocolV3TestBase {
   }
 
   function test_config_poolWiringUnchanged() external {
-    UpgradePayload _payload = UpgradePayload(_getTestPayload());
-    PoolWiring memory wiringBefore = _getPoolWiring(_payload);
+    UpgradePayload payload = UpgradePayload(_getTestPayload());
+    PoolWiring memory wiringBefore = _getPoolWiring(payload);
 
-    executePayload(vm, address(_payload));
+    executePayload(vm, address(payload));
 
-    PoolWiring memory wiringAfter = _getPoolWiring(_payload);
+    PoolWiring memory wiringAfter = _getPoolWiring(payload);
     assertEq(wiringAfter.addressesProviderEntries, wiringBefore.addressesProviderEntries);
     assertEq(wiringAfter.marketId, wiringBefore.marketId);
     assertEq(wiringAfter.poolConfiguratorImpl, wiringBefore.poolConfiguratorImpl);
@@ -269,10 +269,10 @@ abstract contract UpgradeTest is ProtocolV3TestBase {
   }
 
   function test_libraries_matchCompiledCode() external {
-    UpgradePayload _payload = UpgradePayload(_getTestPayload());
-    IPool pool = _payload.POOL();
+    UpgradePayload payload = UpgradePayload(_getTestPayload());
+    IPool pool = payload.POOL();
 
-    executePayload(vm, address(_payload));
+    executePayload(vm, address(payload));
 
     _assertLibrary(pool.getBorrowLogic(), type(BorrowLogic).creationCode, type(BorrowLogic).runtimeCode);
     _assertLibrary(pool.getFlashLoanLogic(), type(FlashLoanLogic).creationCode, type(FlashLoanLogic).runtimeCode);
@@ -282,22 +282,22 @@ abstract contract UpgradeTest is ProtocolV3TestBase {
   }
 
   function test_execute_revertsWhenAlreadyUpgraded() external {
-    UpgradePayload _payload = UpgradePayload(_getTestPayload());
+    UpgradePayload payload = UpgradePayload(_getTestPayload());
 
-    executePayload(vm, address(_payload));
+    executePayload(vm, address(payload));
 
     vm.expectRevert(UpgradePayload.WrongPoolRevision.selector);
-    _payload.execute();
+    payload.execute();
   }
 
   function test_constructor_revertsOnAddressesProviderMismatch() external {
-    UpgradePayload _payload = UpgradePayload(_getTestPayload());
-    IPoolAddressesProvider addressesProvider = _payload.POOL_ADDRESSES_PROVIDER();
+    UpgradePayload payload = UpgradePayload(_getTestPayload());
+    IPoolAddressesProvider addressesProvider = payload.POOL_ADDRESSES_PROVIDER();
 
     address poolImpl = address(
       new PoolInstance(
         IPoolAddressesProvider(address(0xdead)),
-        IReserveInterestRateStrategy(_payload.POOL().RESERVE_INTEREST_RATE_STRATEGY())
+        IReserveInterestRateStrategy(payload.POOL().RESERVE_INTEREST_RATE_STRATEGY())
       )
     );
 
@@ -306,8 +306,8 @@ abstract contract UpgradeTest is ProtocolV3TestBase {
   }
 
   function test_constructor_revertsOnInterestRateStrategyMismatch() external {
-    UpgradePayload _payload = UpgradePayload(_getTestPayload());
-    IPoolAddressesProvider addressesProvider = _payload.POOL_ADDRESSES_PROVIDER();
+    UpgradePayload payload = UpgradePayload(_getTestPayload());
+    IPoolAddressesProvider addressesProvider = payload.POOL_ADDRESSES_PROVIDER();
 
     address poolImpl = address(new PoolInstance(addressesProvider, IReserveInterestRateStrategy(address(0xdead))));
 
@@ -316,9 +316,9 @@ abstract contract UpgradeTest is ProtocolV3TestBase {
   }
 
   function test_reentrancy_supplyFromFlashLoanCallback() external {
-    UpgradePayload _payload = UpgradePayload(_getTestPayload());
-    IPool pool = _payload.POOL();
-    executePayload(vm, address(_payload));
+    UpgradePayload payload = UpgradePayload(_getTestPayload());
+    IPool pool = payload.POOL();
+    executePayload(vm, address(payload));
 
     ReserveConfig memory config = _getE2eReserve(pool, true);
     _removeCaps(pool, config);
@@ -336,9 +336,9 @@ abstract contract UpgradeTest is ProtocolV3TestBase {
   }
 
   function test_reentrancy_guardedActionReentryReverts() external {
-    UpgradePayload _payload = UpgradePayload(_getTestPayload());
-    IPool pool = _payload.POOL();
-    executePayload(vm, address(_payload));
+    UpgradePayload payload = UpgradePayload(_getTestPayload());
+    IPool pool = payload.POOL();
+    executePayload(vm, address(payload));
 
     ReserveConfig memory config = _getE2eReserve(pool, false);
     _removeCaps(pool, config);
@@ -364,8 +364,8 @@ abstract contract UpgradeTest is ProtocolV3TestBase {
    * Executing the upgrade inside the callback must leave every reserve exactly as executing it after the flashloan.
    */
   function test_flashloan_upgradeInsideCallback() public {
-    UpgradePayload _payload = UpgradePayload(_getTestPayload());
-    IPool pool = _payload.POOL();
+    UpgradePayload payload = UpgradePayload(_getTestPayload());
+    IPool pool = payload.POOL();
     (address[] memory assets, uint256[] memory amounts) = _flashLoanAssets(pool);
 
     uint256 premiumTotal = pool.FLASHLOAN_PREMIUM_TOTAL();
@@ -377,14 +377,14 @@ abstract contract UpgradeTest is ProtocolV3TestBase {
 
     uint256 snapshot = vm.snapshotState();
     _flashLoan(pool, assets, amounts);
-    executePayload(vm, address(_payload));
+    executePayload(vm, address(payload));
     bytes32[] memory expected = _reserveStates(pool);
     vm.revertToState(snapshot);
 
-    _flashPayload = address(_payload);
+    _flashPayload = address(payload);
     _flashLoan(pool, assets, amounts);
 
-    assertEq(IPoolRevision(address(pool)).POOL_REVISION(), _payload.NEW_POOL_REVISION());
+    assertEq(IPoolRevision(address(pool)).POOL_REVISION(), payload.NEW_POOL_REVISION());
     bytes32[] memory actual = _reserveStates(pool);
     for (uint256 i = 0; i < actual.length; i++) {
       assertEq(actual[i], expected[i]);
@@ -393,23 +393,23 @@ abstract contract UpgradeTest is ProtocolV3TestBase {
 
   /// @dev Same as above with a debt-opening (mode 2) flashloan, where the v3.7 frame runs the borrow after the upgrade.
   function test_flashloan_upgradeInsideDebtOpeningCallback() public {
-    UpgradePayload _payload = UpgradePayload(_getTestPayload());
-    IPool pool = _payload.POOL();
+    UpgradePayload payload = UpgradePayload(_getTestPayload());
+    IPool pool = payload.POOL();
     FlashBorrow memory flashBorrow = _getFlashBorrow(pool);
     _removeCaps(pool, flashBorrow.collateral);
     _removeCaps(pool, flashBorrow.asset);
 
     uint256 snapshot = vm.snapshotState();
     _openDebtWithFlashLoan(pool, flashBorrow);
-    executePayload(vm, address(_payload));
+    executePayload(vm, address(payload));
     bytes32[] memory expected = _reserveStates(pool);
     bytes32 expectedUser = _userState(pool, flashBorrow);
     vm.revertToState(snapshot);
 
-    _flashPayload = address(_payload);
+    _flashPayload = address(payload);
     _openDebtWithFlashLoan(pool, flashBorrow);
 
-    assertEq(IPoolRevision(address(pool)).POOL_REVISION(), _payload.NEW_POOL_REVISION());
+    assertEq(IPoolRevision(address(pool)).POOL_REVISION(), payload.NEW_POOL_REVISION());
     assertGt(IERC20(flashBorrow.asset.variableDebtToken).balanceOf(address(this)), 0);
     assertEq(_userState(pool, flashBorrow), expectedUser);
     bytes32[] memory actual = _reserveStates(pool);
@@ -595,9 +595,9 @@ abstract contract UpgradeTest is ProtocolV3TestBase {
     category.ltvzeroBitmap = pool.getEModeCategoryLtvzeroBitmap(id);
   }
 
-  function _getPoolWiring(UpgradePayload _payload) internal view returns (PoolWiring memory wiring) {
-    IPoolAddressesProvider addressesProvider = _payload.POOL_ADDRESSES_PROVIDER();
-    IPool pool = _payload.POOL();
+  function _getPoolWiring(UpgradePayload payload) internal view returns (PoolWiring memory wiring) {
+    IPoolAddressesProvider addressesProvider = payload.POOL_ADDRESSES_PROVIDER();
+    IPool pool = payload.POOL();
     wiring.addressesProviderEntries = new address[](ADDRESSES_PROVIDER_IDS.length);
     for (uint256 i = 0; i < ADDRESSES_PROVIDER_IDS.length; i++) {
       wiring.addressesProviderEntries[i] = addressesProvider.getAddress(ADDRESSES_PROVIDER_IDS[i]);
