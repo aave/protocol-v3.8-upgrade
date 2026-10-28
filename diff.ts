@@ -6,14 +6,7 @@ import {
   parseEtherscanStyleSourceCode,
   StandardJsonInput,
 } from "@aave-dao/toolbox";
-import {
-  mkdirSync,
-  readdirSync,
-  readFileSync,
-  statSync,
-  unlinkSync,
-  writeFileSync,
-} from "fs";
+import { mkdirSync, readdirSync, readFileSync, writeFileSync } from "fs";
 import path from "path";
 import { Hex, getAddress, slice } from "viem";
 
@@ -32,6 +25,22 @@ const files = readdirSync(directoryPath);
 // Filter files ending with '_after'
 const filteredFiles = files.filter((file) => file.endsWith("_after.json"));
 
+// the toolbox resolves Ink to Routescan, where these contracts are not verified
+const explorerApis: Record<number, string> = {
+  57073: "https://explorer.inkonchain.com/api",
+};
+
+async function fetchSource(chainId: number, address: string) {
+  // sequential lookups with a pause stay under the explorers' per-second rate limits
+  await new Promise((resolve) => setTimeout(resolve, 500));
+  return getSourceCode({
+    chainId,
+    address: address as any,
+    apiKey: process.env.ETHERSCAN_API_KEY,
+    apiUrl: process.env.EXPLORER_PROXY ?? explorerApis[chainId],
+  });
+}
+
 async function diff({
   address1,
   address2,
@@ -41,20 +50,10 @@ async function diff({
   output,
   path = "./diffs/code",
 }) {
-  const sources = await Promise.all([
-    getSourceCode({
-      chainId: Number(chainId1),
-      address: address1 as any,
-      apiKey: process.env.ETHERSCAN_API_KEY,
-      apiUrl: process.env.EXPLORER_PROXY,
-    }),
-    getSourceCode({
-      chainId: Number(chainId2),
-      address: address2 as any,
-      apiKey: process.env.ETHERSCAN_API_KEY,
-      apiUrl: process.env.EXPLORER_PROXY,
-    }),
-  ]);
+  const sources = [
+    await fetchSource(Number(chainId1), address1),
+    await fetchSource(Number(chainId2), address2),
+  ];
   const source1: StandardJsonInput = (sources[0] as BlockscoutStyleSourceCode)
     .AdditionalSources
     ? parseBlockscoutStyleSourceCode(sources[0] as BlockscoutStyleSourceCode)
@@ -117,65 +116,4 @@ for (const file of filteredFiles) {
       });
     }
   }
-}
-
-// now as the diffing is done, let's remove duplicates and generate a report
-// Function to read files recursively
-function getFiles(
-  dir,
-  fileList: { path: string; name: string; content: string }[] = [],
-) {
-  const files = readdirSync(dir);
-
-  files.forEach((file) => {
-    const filePath = path.join(dir, file);
-    if (statSync(filePath).isDirectory()) {
-      getFiles(filePath, fileList);
-    } else {
-      fileList.push({
-        path: filePath,
-        name: file,
-        content: readFileSync(filePath, { encoding: "utf8" }),
-      });
-    }
-  });
-
-  return fileList;
-}
-
-// Get all files including subdirectories
-// Normalize patch content by trimming paths in --- / +++ lines to just the filename
-function normalizePatch(content: string): string {
-  return content
-    .split("\n")
-    .map((line) => {
-      if (line.startsWith("--- ") || line.startsWith("+++ ")) {
-        const prefix = line.slice(0, 4);
-        const filePath = line.slice(4);
-        return prefix + filePath.split("/").pop();
-      }
-      return line;
-    })
-    .join("\n")
-    .trim();
-}
-
-const allFiles = getFiles(path.join(__dirname, "diffs", "code"));
-const uniqueArray = allFiles
-  .sort((a, b) => {
-    const extractNumber = (str) => {
-      const match = str.match(/\/diffs\/code\/(\d+)\//);
-      return match ? parseInt(match[1], 10) : Infinity;
-    };
-
-    return extractNumber(a.path) - extractNumber(b.path);
-  })
-  .filter(
-    (obj, index, self) =>
-      index === self.findIndex((o) => normalizePatch(o.content) === normalizePatch(obj.content)),
-  );
-
-for (const file of allFiles) {
-  const isUnique = uniqueArray.find((uniq) => uniq.path === file.path);
-  if (!isUnique) unlinkSync(file.path);
 }

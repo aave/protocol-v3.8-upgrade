@@ -1,0 +1,15 @@
+Index: lib/aave-v3-origin-private/src/contracts/instances/PoolInstance.sol
+===================================================================
+--- lib/aave-v3-origin-private/src/contracts/instances/PoolInstance.sol
++++ lib/aave-v3-origin-private/src/contracts/instances/PoolInstance.sol
+@@ -11,9 +11,9 @@
+  * @author BGD Labs
+  * @notice Instance of the Pool for the Aave protocol
+  */
+ contract PoolInstance is Pool {
+-    uint256 public constant POOL_REVISION = 11;
++    uint256 public constant POOL_REVISION = 12;
+ 
+     constructor(
+         IPoolAddressesProvider provider,
+         IReserveInterestRateStrategy interestRateStrategy_
