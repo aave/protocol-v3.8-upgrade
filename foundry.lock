@@ -8,7 +8,7 @@
   "lib/aave-v3-origin": {
     "branch": {
       "name": "feat/V3.8",
-      "rev": "0351c9d30d3a5ff888fb5da50989d1425ae96430"
+      "rev": "9b992e5887f5955f8f710e317c7c782546e79456"
     }
   }
 }
