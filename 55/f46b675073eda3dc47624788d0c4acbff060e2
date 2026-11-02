@@ -1,0 +1,41 @@
+.github/workflows/test.yml
+  s_04da9fe33e9a43::t_e0fe5b7a147ce0 59-81
+.gitmodules
+  s_04da9fe33e9a43::t_dd13a0af123f90 9-11
+Makefile
+  s_04da9fe33e9a43::t_b50e0db72daf3b 11
+README.md
+  s_04da9fe33e9a43::t_bb1520498ca4c9 24-27
+foundry.lock
+  s_04da9fe33e9a43::t_be29e65fb6a242 13-18
+foundry.toml
+  s_04da9fe33e9a43::t_40a4bebc40e75a 12,21-25
+lib/aave-v3-origin-v3.7
+  s_04da9fe33e9a43::t_e562ca064ce374 1
+package-lock.json
+  s_04da9fe33e9a43::t_8487be22cc96ea 16-18,117-123,163-195,237-276,298-313,320-345,352-410,420-652,662-773,799-809,814-1092,1118-1231,1262-1289,1318-1449,1461-1587,1618-1639
+package.json
+  s_04da9fe33e9a43::t_8200d74191c9fe 20-22
+test/Ink.t.sol
+  s_04da9fe33e9a43::t_fe75a0c3f8fc58 54-58
+test/UpgradeTest.t.sol
+  s_04da9fe33e9a43::t_01390b113563a1 69-75,209-251,734-783
+test/XLayer.t.sol
+  s_04da9fe33e9a43::t_627a0443bf20c8 17-21
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "55f46b675073eda3dc47624788d0c4acbff060e2",
+  "prompts": {},
+  "sessions": {
+    "s_04da9fe33e9a43": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "edbe4941-0dfc-48ff-89db-dac35e1d57bf",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Alexandru Niculae <43644109+avniculae@users.noreply.github.com>"
+    }
+  }
+}
