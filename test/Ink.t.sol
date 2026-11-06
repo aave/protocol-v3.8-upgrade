@@ -51,4 +51,9 @@ contract InkTest is UpgradeTest("ink", 59624995) {
     assertEq(IPoolRevision(address(upgradePayload.POOL())).POOL_REVISION(), upgradePayload.NEW_POOL_REVISION());
     assertEq(_getImplementation(address(upgradePayload.POOL())), upgradePayload.POOL_IMPL());
   }
+
+  /// @dev `forge clone` does not support this chain's explorer, so the reference is the v3.7.0 release.
+  function _buildReferenceImplementation(string memory dir, address) internal virtual override returns (string memory) {
+    return _buildReleaseReference(dir);
+  }
 }

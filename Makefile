@@ -8,6 +8,7 @@ update:; forge update
 # Build & test
 build  :; forge build --sizes
 test   :; forge test -vvv
+upgrade-safety :; FOUNDRY_PROFILE=upgrade-safety forge test -vv
 
 # Utilities
 download :; cast etherscan-source --chain ${chain} -d src/etherscan/${chain}_${address} ${address}
