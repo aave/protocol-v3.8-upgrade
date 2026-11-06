@@ -10,5 +10,11 @@
       "name": "feat/V3.8",
       "rev": "9b992e5887f5955f8f710e317c7c782546e79456"
     }
+  },
+  "lib/aave-v3-origin-v3.7": {
+    "tag": {
+      "name": "v3.7.0",
+      "rev": "cff15de6d1271b0c800fc001f4aea4c263e8a597"
+    }
   }
 }

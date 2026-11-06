@@ -21,6 +21,10 @@ v3.8 adds a transient reentrancy guard to the `Pool` ([changelog](lib/aave-v3-or
 | `execute()`, before upgrade | `WrongPoolRevision` | the live pool is at revision 11 |
 | `execute()`, after upgrade | `WrongPoolRevision` | the live pool is at revision 12 |
 
+## Upgrade safety
+
+`make upgrade-safety` runs the OpenZeppelin upgrades checker (`@openzeppelin/upgrades-core` 1.46.0) for every market. It reads the live pool implementation at the test's pinned block, clones its verified source with `forge clone`, and validates the new `PoolInstance` or `L2PoolInstance` against it, storage layout included. `forge clone` does not support the Ink and X Layer explorers, so those two are validated against the v3.7.0 release in `lib/aave-v3-origin-v3.7`. It needs `ETHERSCAN_API_KEY` and the RPC variables. The allowed exceptions are listed in `UPGRADE_SAFETY_UNSAFE_ALLOW`.
+
 ## Libraries
 
 | Library | Address |

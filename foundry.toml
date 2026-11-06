@@ -9,6 +9,7 @@ optimizer_runs = 200
 solc = '0.8.27'
 evm_version = 'cancun'
 bytecode_hash = 'none'
+no_match_test = "test_upgradeSafety"
 libraries = [
     'aave-v3-origin/contracts/protocol/libraries/logic/BorrowLogic.sol:BorrowLogic:0x52Da0ce88202D1542543598D1e1e27F0d344726A',
     'aave-v3-origin/contracts/protocol/libraries/logic/FlashLoanLogic.sol:FlashLoanLogic:0xC27a4d7AC0623B129919786d88714eF16132BEaE',
@@ -16,6 +17,11 @@ libraries = [
     'aave-v3-origin/contracts/protocol/libraries/logic/PoolLogic.sol:PoolLogic:0xD70593841C57cbaA04957cc3EAcE95708e48853b',
     'aave-v3-origin/contracts/protocol/libraries/logic/SupplyLogic.sol:SupplyLogic:0x584C7d8c4cb05304FE5Ac7fbc97f20A10Fb07564'
 ]
+
+# OpenZeppelin upgrade safety check: `make upgrade-safety`
+[profile.upgrade-safety]
+match_test = "test_upgradeSafety"
+no_match_test = "^$"
 
 [rpc_endpoints]
 mainnet = "${RPC_MAINNET}"

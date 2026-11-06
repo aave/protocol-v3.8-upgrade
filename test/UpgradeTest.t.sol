@@ -66,6 +66,13 @@ abstract contract UpgradeTest is ProtocolV3TestBase {
   bytes32 internal constant LAST_INITIALIZED_REVISION_SLOT = bytes32(uint256(0));
   bytes32 internal constant INITIALIZING_SLOT = bytes32(uint256(1));
 
+  string internal constant UPGRADE_SAFETY_DIR = "cache/upgrade-safety/";
+  // constructor and immutables: the Pool sets ADDRESSES_PROVIDER and RESERVE_INTEREST_RATE_STRATEGY at deploy
+  // external-library-linking: the logic libraries are deployed separately and linked
+  // state-variable-assignment: VersionedInitializable assigns `lastInitializedRevision = 0`, its default
+  string internal constant UPGRADE_SAFETY_UNSAFE_ALLOW =
+    "constructor,state-variable-immutable,external-library-linking,state-variable-assignment";
+
   string public NETWORK;
   string public NETWORK_SUB_NAME;
   uint256 public immutable BLOCK_NUMBER;
@@ -197,6 +204,49 @@ abstract contract UpgradeTest is ProtocolV3TestBase {
     assertTrue(_hasSelector(previousImpl, IPool.getReserveData.selector));
     assertTrue(_hasSelector(newImpl, IPool.getReserveData.selector));
     assertEq(_hasSelector(newImpl, IL2Pool.supply.selector), _hasSelector(previousImpl, IL2Pool.supply.selector));
+  }
+
+  /// @dev Validates the new pool implementation against the live one with the OpenZeppelin upgrades checker.
+  function test_upgradeSafety_poolImplementation() external {
+    UpgradePayload payload = UpgradePayload(_getTestPayload());
+    address previousImpl = _getImplementation(address(payload.POOL()));
+    assertEq(IPoolRevision(previousImpl).POOL_REVISION(), payload.PREVIOUS_POOL_REVISION());
+
+    string memory name = _hasSelector(previousImpl, IL2Pool.supply.selector) ? "L2PoolInstance" : "PoolInstance";
+    string memory dir = string.concat(UPGRADE_SAFETY_DIR, vm.toString(block.chainid), "-", vm.toString(previousImpl));
+    string memory referenceBuildInfo = _buildReferenceImplementation(dir, previousImpl);
+
+    _shell(
+      string.concat(
+        "rm -rf ",
+        dir,
+        "/current && forge build lib/aave-v3-origin/src/contracts/instances/",
+        name,
+        ".sol --quiet --skip test --skip script --out ",
+        dir,
+        "/current/out --cache-path ",
+        dir,
+        "/current/cache --build-info --build-info-path ",
+        dir,
+        "/current/build-info --extra-output storageLayout"
+      )
+    );
+    _shell(
+      string.concat(
+        "npx --no @openzeppelin/upgrades-core validate ",
+        dir,
+        "/current/build-info --contract lib/aave-v3-origin/src/contracts/instances/",
+        name,
+        ".sol:",
+        name,
+        " --reference build-info-reference:",
+        name,
+        " --referenceBuildInfoDirs ",
+        referenceBuildInfo,
+        " --requireReference --unsafeAllow ",
+        UPGRADE_SAFETY_UNSAFE_ALLOW
+      )
+    );
   }
 
   function test_config_reservesUnchanged() external {
@@ -679,6 +729,56 @@ abstract contract UpgradeTest is ProtocolV3TestBase {
       if (candidate == selector) return true;
     }
     return false;
+  }
+
+  /// @dev Clones the verified source of `previousImpl` and builds it with storage layouts.
+  function _buildReferenceImplementation(string memory dir, address previousImpl)
+    internal
+    virtual
+    returns (string memory)
+  {
+    vm.envString("ETHERSCAN_API_KEY");
+    // retries `forge clone` with backoff, the explorer rate limits parallel suites
+    _shell(
+      string.concat(
+        "for i in 1 2 3 4 5 6; do rm -rf ",
+        dir,
+        "/reference && forge clone --no-git --quiet --chain ",
+        vm.toString(block.chainid),
+        " ",
+        vm.toString(previousImpl),
+        " ",
+        dir,
+        "/reference && break; [ $i = 6 ] && exit 1; sleep $((i * 5)); done && cd ",
+        dir,
+        "/reference && forge build --quiet --build-info --build-info-path out/build-info-reference --extra-output storageLayout"
+      )
+    );
+    return string.concat(dir, "/reference/out/build-info-reference");
+  }
+
+  /// @dev Builds the v3.7.0 release, for chains whose explorer is not supported by `forge clone`.
+  function _buildReleaseReference(string memory dir) internal returns (string memory) {
+    string memory buildInfo = string.concat(vm.projectRoot(), "/", dir, "/v3.7.0/build-info-reference");
+    _shell(
+      string.concat(
+        "rm -rf ",
+        buildInfo,
+        " && forge build --quiet --root lib/aave-v3-origin-v3.7 --skip test --skip script --build-info --build-info-path ",
+        buildInfo,
+        " --extra-output storageLayout"
+      )
+    );
+    return buildInfo;
+  }
+
+  function _shell(string memory command) internal {
+    string[] memory inputs = new string[](3);
+    inputs[0] = "bash";
+    inputs[1] = "-c";
+    inputs[2] = command;
+    Vm.FfiResult memory result = vm.tryFfi(inputs);
+    assertEq(result.exitCode, 0, string(abi.encodePacked(result.stdout, result.stderr)));
   }
 
   function _getImplementation(address proxy) internal view returns (address) {

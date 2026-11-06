@@ -6,3 +6,6 @@
 	path = lib/aave-v3-origin
 	url = https://github.com/aave-dao/aave-v3-origin
 	branch = feat/V3.8
+[submodule "lib/aave-v3-origin-v3.7"]
+	path = lib/aave-v3-origin-v3.7
+	url = https://github.com/aave-dao/aave-v3-origin

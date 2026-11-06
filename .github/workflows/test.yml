@@ -56,3 +56,26 @@ jobs:
         run: |
           echo "tests failed"
           exit 1
+
+  upgrade-safety:
+    name: OpenZeppelin upgrade safety
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - uses: aave-dao/action-rpc-env@main
+        with:
+          ALCHEMY_API_KEY: ${{ secrets.ALCHEMY_API_KEY }}
+
+      - name: Setup node
+        uses: aave-dao/github-workflows/.github/actions/setup-node@main
+
+      - name: Run Foundry setup
+        uses: aave-dao/github-workflows/.github/actions/foundry-setup@main
+
+      - name: Run upgrade safety checks
+        run: make upgrade-safety
+        env:
+          ETHERSCAN_API_KEY: ${{ secrets.ETHERSCAN_API_KEY }}
